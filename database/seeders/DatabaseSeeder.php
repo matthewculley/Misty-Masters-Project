@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $stories = Story::factory()->count(20)->create();
+        $stories = Story::factory()->count(10)->create();
     }
 }

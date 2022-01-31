@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StoryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/stories', [StoryController::class, 'index'])
+    ->name('stories.index');
+
+Route::get('/stories/{id}', [StoryController::class, 'show'])
+    ->name('stories.show');
