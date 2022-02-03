@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Story extends Model
+class Review extends Model
 {
     use HasFactory;
 
-    public function reviews()
+    public function story()
     {
-        return $this->hasMany('App\Models\Review');
+        return $this->belongsTo('App\Models\Story');
     }
-}   
-
+}

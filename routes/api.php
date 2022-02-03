@@ -26,3 +26,6 @@ Route::get('stories', [StoryController::class, 'apiIndex'])
 Route::get('stories/{id}', [StoryController::class, 'apiShow'])
     ->name('api.stories.show');
 
+Route::get('stories/{id}/reviews', [StoryController::class, 'apiShowReviews'])
+    ->name('api.stories.showReviews');
+

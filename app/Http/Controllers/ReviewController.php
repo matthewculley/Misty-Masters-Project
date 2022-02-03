@@ -1,13 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Story;
-use App\Models\Review;
-
 
 use Illuminate\Http\Request;
 
-class StoryController extends Controller
+class ReviewController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,12 +13,11 @@ class StoryController extends Controller
      */
     public function index()
     {
-        $stories = Story::all();
-        return view('stories.index', ['stories'=>$stories]);
+        //
     }
 
-    public function apiIndex(){
-        return Story::all();
+    public function apiIndex() {
+        
     }
 
     /**
@@ -53,19 +49,7 @@ class StoryController extends Controller
      */
     public function show($id)
     {
-        $story = Story::findOrFail($id);
-        return view('stories.show', ['story' => $story]);
-    }
-
-    public function apiShow($id)
-    {
-        $story = Story::findOrFail($id);
-        return $story;
-    }
-
-    public function apiShowReviews($id) {
-        $reviews = Review::all()->where('story_id', $id); 
-        return $reviews;
+        //
     }
 
     /**

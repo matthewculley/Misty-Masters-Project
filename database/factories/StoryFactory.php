@@ -17,6 +17,7 @@ class StoryFactory extends Factory
             'title' => $this->faker->realText(rand(10, 30)),
             'description' => $this->faker->realText(rand(25, 100)),
             'times_played' => $this->faker->numberBetween($min = 0, $max = 200)
+            
         ];
     }
 }
