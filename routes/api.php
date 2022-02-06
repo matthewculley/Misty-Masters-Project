@@ -29,3 +29,6 @@ Route::get('stories/{id}', [StoryController::class, 'apiShow'])
 Route::get('stories/{id}/reviews', [StoryController::class, 'apiShowReviews'])
     ->name('api.stories.showReviews');
 
+Route::post('stories/{id}/addReview', [StoryController::class, 'apiCreateReview'])
+    ->name('api.stories.createReview');
+

@@ -34,6 +34,14 @@ class StoryController extends Controller
         //
     }
 
+    public function createReview($request){
+        $review = new Review();
+        $review->review = $request['review'];
+        $review->rating = $request['rating'];
+        $review->story_id = $request['story_id'];
+        $review->save();
+        return $review;
+    }
     /**
      * Store a newly created resource in storage.
      *
