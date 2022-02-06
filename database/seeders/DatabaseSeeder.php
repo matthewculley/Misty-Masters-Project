@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $stories = Story::factory()->count(10)->create();
+        $stories = Story::factory()->count(20)->create();
         
         $reviews = Review::factory()->count(sizeof($stories)*20)->create();
 
