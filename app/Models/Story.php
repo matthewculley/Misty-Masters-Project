@@ -13,5 +13,10 @@ class Story extends Model
     {
         return $this->hasMany('App\Models\Review');
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany('App\Models\Tag');
+    }
 }   
 

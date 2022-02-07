@@ -5,9 +5,19 @@
 @section('content')
 <div id="root">
     <h3>Stories</h3>
+    <h5>Search by title</h5>
     <input type="text" placeholder="search" v-model="searchTerm"></input>
     <input type="submit" value="Search" @click="search"></input>
+    <br>
+    <h5>Or by keywords</h5>
+    <div v-for="s in tags">
+        <input :id="s.tag" type="checkbox" :value="s.tag" v-model="checkedTags"></input>
+        <label :for="s.tag">@{{ s.tag }}</label>
+    </div>
+    <input type="submit" value="Apply Keywords" @click="filterTags"></input>
+    <h5>Reset search and keywords</h5>
     <input type="submit" value="Reset" @click="reset"></input>
+
     <ul>
         <li v-for="s in displayStories" :key="s.title"><a :href="/stories/ + s.id">@{{ s.title }}</a></li> 
     </ul>
@@ -18,10 +28,14 @@
         data: {
             stories: [],
             displayStories: [],
+            tags: [],
             searchTerm: "",
+            checkedTags: [],
+            returnData: [],
         },
         methods: {
             search: function() {
+                this.reset();
                 this.displayStories = [];
 
                 var closeMatchesDict = {};
@@ -113,6 +127,22 @@
 
 
             },
+            
+            filterTags: function() {
+                this.reset();
+                var tags = String(this.checkedTags).replace(/,/g, "+").replace(/ /g, "_");
+                axios.get("/api/stories/tags/" + tags)
+                .then(response=>{
+                    this.displayStories = (response.data);
+                    console.log(response.data);
+                })
+                .catch(response => {
+                    this.returnData = [];
+                    console.log(response.data);
+                    console.log(response.response);
+                })
+            },
+
             reset: function() {
                 this.displayStories = this.stories;
             }
@@ -125,8 +155,16 @@
             })
             .catch(response => {
                 console.log(response.data);
+            }),
+            axios.get("/api/tags")
+            .then(response=>{
+                this.tags = Object.values(response.data);
             })
-        }
+            .catch(response => {
+                console.log(response.data);
+            })
+         
+        }   
     });            
 </script>
 @endsection

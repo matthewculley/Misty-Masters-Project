@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Story;
 use App\Models\Review;
+use App\Models\Tag;
 
 
 use Illuminate\Http\Request;
@@ -22,6 +23,45 @@ class StoryController extends Controller
 
     public function apiIndex(){
         return Story::all();
+    }
+
+    public function apiIndexTags($t) {
+        $tagsString = str_replace("_", " ", $t);
+        $tagsArray = explode("+", $tagsString);
+        $filterTags = [];
+        foreach($tagsArray as $t) {
+            $tag = Tag::all()->where('tag', $t)->first();
+            array_push($filterTags, $tag);
+        }
+        
+        $stories = Story::all();
+        $returnStories = [];
+
+        // foreach ($stories as $s) {
+        //     if($s->tags()->get()->contains($filterTags->id)) {
+        //         array_push($returnStories, $s);
+        //     }
+        // }
+        
+        // // $returnStories = [];
+
+        // // $t = $filterTags[0];
+        // // $stories = Story::all();
+
+        foreach ($stories as $s) {
+            $addToArray = true;
+            foreach ($filterTags as $t) {
+                if (!$s->tags()->get()->contains($t->id)) {
+                    $addToArray = false;
+                }
+            }
+
+            if ($addToArray == true) {
+                array_push($returnStories, $s);
+            }
+            
+        }
+        return $returnStories;
     }
 
     /**

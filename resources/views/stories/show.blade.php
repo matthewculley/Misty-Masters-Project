@@ -11,7 +11,7 @@
         <li>Average Rating: @{{ averageRating }}</li>
     </ul>
     <h3>Play Story</h3>
-    <lable>Interactivity: </lable>
+    <label>Interactivity: </label>
     <label for="0">0</label>
     <input type="radio" v-model="interactivity" id="0" name="interactivity" value="0">
     <label for="1">1</label>
