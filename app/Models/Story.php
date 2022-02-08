@@ -18,5 +18,10 @@ class Story extends Model
     {
         return $this->belongsToMany('App\Models\Tag');
     }
+
+    public function histories()
+    {
+        return $this->hasMany('App\Models\History');
+    }
 }   
 

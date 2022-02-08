@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\Story;
 use App\Models\Review;
 use App\Models\Tag;
-
+use App\Models\History;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StoryController extends Controller
 {
@@ -114,6 +115,11 @@ class StoryController extends Controller
     public function apiShowReviews($id) {
         $reviews = Review::all()->where('story_id', $id); 
         return $reviews;
+    }
+
+    public function apiShowHistories($id) {
+        $histories = DB::table('histories')->where('story_id', $id)->orderBy('last_played', 'desc')->get();
+        return $histories;
     }
 
     /**

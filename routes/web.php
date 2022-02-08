@@ -24,3 +24,8 @@ Route::get('/stories', [StoryController::class, 'index'])
 
 Route::get('/stories/{id}', [StoryController::class, 'show'])
     ->name('stories.show');
+
+Route::get('/misty', function (){
+    return view('misty.show');
+});
+    

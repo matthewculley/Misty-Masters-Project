@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\HistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +32,18 @@ Route::get('stories/{id}', [StoryController::class, 'apiShow'])
 
 Route::get('stories/{id}/reviews', [StoryController::class, 'apiShowReviews'])
     ->name('api.stories.showReviews');
+    
+Route::get('stories/{id}/history', [StoryController::class, 'apiShowHistories'])
+    ->name('api.stories.showHistories');
 
 Route::post('stories/{id}/addReview', [StoryController::class, 'apiCreateReview'])
     ->name('api.stories.createReview');
 
 Route::get('tags', [TagController::class, 'apiIndex'])
     ->name('api.tags.index');
+
+Route::get('misty/stories_played', [HistoryController::class, 'apiIndex']) 
+    ->name('api.misty.stories_played');
+
+
 

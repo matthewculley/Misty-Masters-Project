@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Story;
 use App\Models\Review;
 use App\Models\Tag;
+use App\Models\History;
 
 
 class DatabaseSeeder extends Seeder
@@ -43,6 +44,13 @@ class DatabaseSeeder extends Seeder
                 } 
             }
             $s->save();           
+        }
+
+        $histories = History::factory()->count(500)->create();
+        foreach($histories as $h) {
+            $story = Story::inRandomOrder()->first();
+            $h->story()->associate($story->id);
+            $h->save();
         }
 
         // $tag = Tag::all()->first();
