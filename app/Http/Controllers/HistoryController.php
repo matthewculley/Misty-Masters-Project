@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\History;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -34,7 +36,19 @@ class HistoryController extends Controller
      */
     public function create()
     {
-        //
+
+    }
+
+    public function apiCreate(Request $request)
+    {
+        $story_id = $request['id'];
+        $last_played = $request['last_played'];
+        $h = new History();
+        $h->story_id = $story_id;
+        $h->last_played = $last_played;
+        $h->save();
+
+        return;
     }
 
     /**

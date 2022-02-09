@@ -78,9 +78,7 @@
                     story_id: {{ $story->id }},
                 })
                 .then(response => {
-                    this.newReview = "";
-                    this.newRating = 0;
-                    this.reviews.push(response.data);
+                   
                 })
                 .catch(response => {
                     console.log(response);
@@ -89,8 +87,16 @@
             },
             playStory: function() {
                 console.log("Playing story: " + "{{ $story->title }}" + ", interactivity level: " + this.interactivity);
-
-                //TODO post request to add to recently played stories
+                axios.post("/api/stories/" + "{{ $story->id }}" + "/play", 
+                {
+                    story_id: {{ $story->id }},
+                    last_played: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                })
+                .then(response => {
+                })
+                .catch(response => {
+                    console.log(response.response);
+                })
 
 
             }

@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         }
 
         foreach($stories as $s) {
-            for ($i=0; $i<rand(1, 5); $i++) {
+            for ($i=0; $i<rand(3, 7); $i++) {
                 $t = Tag::inRandomOrder()->first();
                 if (!$s->tags()->get()->contains($t->id)) {
                     $s->tags()->attach($t->id);

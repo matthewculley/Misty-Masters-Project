@@ -19,7 +19,6 @@ class CreateHistoriesTable extends Migration
             $table->dateTime('last_played');
             $table->unsignedBigInteger('story_id')->nullable();
 
-
             $table->foreign('story_id')->references('id')
                 ->on('stories')->onDelete('cascade')->onUpdate('cascade');
         });

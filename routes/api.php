@@ -39,6 +39,9 @@ Route::get('stories/{id}/history', [StoryController::class, 'apiShowHistories'])
 Route::post('stories/{id}/addReview', [StoryController::class, 'apiCreateReview'])
     ->name('api.stories.createReview');
 
+Route::post('stories/{id}/play', [HistoryController::class, 'apiCreate'])
+    ->name('api.stories.playStory');
+
 Route::get('tags', [TagController::class, 'apiIndex'])
     ->name('api.tags.index');
 

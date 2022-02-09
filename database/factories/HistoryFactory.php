@@ -14,7 +14,7 @@ class HistoryFactory extends Factory
     public function definition()
     {
         return [
-            'last_played' => $this->faker->dateTime(),
+            'last_played' => $this->faker->dateTimeThisYear(),
         ];
     }
 }

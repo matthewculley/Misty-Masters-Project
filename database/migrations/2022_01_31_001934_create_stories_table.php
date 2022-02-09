@@ -18,6 +18,10 @@ class CreateStoriesTable extends Migration
             $table->timestamps();
             $table->string("title");
             $table->string("description");
+            $table->integer("min_suitable_age");
+            $table->integer("max_suitable_age");
+            $table->integer("min_interactivity");
+            $table->integer("max_interactivity");
             $table->integer("times_played");
         });
     }

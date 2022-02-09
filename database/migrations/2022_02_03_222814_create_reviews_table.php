@@ -20,8 +20,6 @@ class CreateReviewsTable extends Migration
             $table->integer('rating');
             $table->string('review');
             
-
-
             $table->foreign('story_id')->references('id')
                 ->on('stories')->onDelete('cascade')->onUpdate('cascade');
         });

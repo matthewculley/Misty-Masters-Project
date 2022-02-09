@@ -27,9 +27,10 @@ class StoryController extends Controller
     }
 
     public function apiIndexTags($t) {
-        $tagsString = str_replace("_", " ", $t);
-        $tagsArray = explode("+", $tagsString);
+        $tagsString = str_replace("_", " ", $t); //string with all tags 
+        $tagsArray = explode("+", $tagsString); // serparate into array of strings
         $filterTags = [];
+        //foreach tag, find the tag model, and add to array
         foreach($tagsArray as $t) {
             $tag = Tag::all()->where('tag', $t)->first();
             array_push($filterTags, $tag);
@@ -38,25 +39,17 @@ class StoryController extends Controller
         $stories = Story::all();
         $returnStories = [];
 
-        // foreach ($stories as $s) {
-        //     if($s->tags()->get()->contains($filterTags->id)) {
-        //         array_push($returnStories, $s);
-        //     }
-        // }
-        
-        // // $returnStories = [];
-
-        // // $t = $filterTags[0];
-        // // $stories = Story::all();
-
+        //for each story
         foreach ($stories as $s) {
             $addToArray = true;
+            //check if each user supplied tag is attached to the story
+            //only add the story to the return array if all tags match
             foreach ($filterTags as $t) {
                 if (!$s->tags()->get()->contains($t->id)) {
                     $addToArray = false;
                 }
             }
-
+            
             if ($addToArray == true) {
                 array_push($returnStories, $s);
             }
@@ -75,7 +68,7 @@ class StoryController extends Controller
         //
     }
 
-    public function createReview($request){
+    public function apiCreateReview(Request $request){
         $review = new Review();
         $review->review = $request['review'];
         $review->rating = $request['rating'];

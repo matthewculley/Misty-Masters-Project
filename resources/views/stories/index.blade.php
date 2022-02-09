@@ -5,22 +5,46 @@
 @section('content')
 <div id="root">
     <h3>Stories</h3>
-    <h5>Search by title</h5>
-    <input type="text" placeholder="search" v-model="searchTerm"></input>
-    <input type="submit" value="Search" @click="search"></input>
-    <br>
-    <h5>Or by keywords</h5>
-    <div v-for="s in tags">
-        <input :id="s.tag" type="checkbox" :value="s.tag" v-model="checkedTags"></input>
-        <label :for="s.tag">@{{ s.tag }}</label>
+    <div id="search">
+        <h5>Search by title</h5>
+        <input type="text" placeholder="search" v-model="searchTerm"></input>
+        <input type="submit" value="Search" @click="search"></input>
+        <br>
     </div>
-    <input type="submit" value="Apply Keywords" @click="filterTags"></input>
-    <h5>Reset search and keywords</h5>
-    <input type="submit" value="Reset" @click="reset"></input>
-
-    <ul>
-        <li v-for="s in displayStories" :key="s.title"><a :href="/stories/ + s.id">@{{ s.title }}</a></li> 
-    </ul>
+    <div id="keywords">
+        <h5>Or by keywords</h5>
+        <div v-for="s in tags">
+            <input :id="s.tag" type="checkbox" :value="s.tag" v-model="checkedTags"></input>
+            <label :for="s.tag">@{{ s.tag }}</label>
+        </div>
+        <input type="submit" value="Apply Keywords" @click="filterTags"></input>
+    </div>
+    <div id="sort">
+        <h5>Sort</h5>
+        <label for="cars">Sort by: </label>
+        <select name="sortType" id="sortType" v-model="sortType">
+            <option value="" disabled selected>Sort by</option>
+            <option value="alpha">Alphabetically</option>
+            <option value="age">Age</option>
+            <option value="lastPlayed">Last Played</option>
+            <option selected="selected" value="mostPlayed">Most Played</option>
+        </select>
+        <select name="" id="sortType" v-model="sortOrder">
+        <option value="" disabled selected>Order by</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <input type="submit" value="Sort" @click="sort"></input>
+    </div>
+    <div id="reset">
+        <h5>Reset search and keywords</h5>
+        <input type="submit" value="Reset" @click="reset"></input>
+    </div>
+    <div id="results">
+        <ul>
+            <li v-for="s in displayStories" :key="s.title"><a :href="/stories/ + s.id">@{{ s.title }}</a></li> 
+        </ul>
+    </div>    
 </div>
 <script>
     var app = new Vue({
@@ -32,6 +56,9 @@
             searchTerm: "",
             checkedTags: [],
             returnData: [],
+            sortType: "",
+            sortOrder: "",
+            history: [],
         },
         methods: {
             search: function() {
@@ -127,20 +154,76 @@
 
 
             },
+
+            sort: function() {
+                switch (this.sortType) {
+                    case "age":
+                        if (this.sortOrder == "asc") {
+                            this.displayStories.sort((a, b) => {
+                                return b.max_suitable_age - a.max_suitable_age;
+                            })
+                        } else if (this.sortOrder == 'desc') {
+                            this.displayStories.sort((a, b) => {
+                                return a.max_suitable_age - b.max_suitable_age;
+                            })
+
+                        }
+                    break;
+                    case "alpha":
+                        if (this.sortOrder == "asc") {
+                            this.displayStories.sort((a, b) => {
+                                return a.title.localeCompare(b.title);
+                            })
+                        } else if (this.sortOrder == 'desc') {
+                            this.displayStories.sort((a, b) => {
+                                return b.title.localeCompare(a.title);
+                            })
+
+                        }
+                    break;
+                    case "lastPlayed":
+                        if (this.sortOrder == "asc") {
+                            this.displayStories.sort((a, b) => {
+                                return b.playOrder - a.playOrder;
+                            })
+                        } else if (this.sortOrder == 'desc') {
+                            this.displayStories.sort((a, b) => {
+                                return a.playOrder - b.playOrder;
+                            })
+                        }
+                    break;
+                    case "mostPlayed": 
+                        if (this.sortOrder == "asc") {
+                            this.displayStories.sort((a, b) => {
+                                return b.times_played - a.times_played;
+                            })
+                        } else if (this.sortOrder == 'desc') {
+                            this.displayStories.sort((a, b) => {
+                                return a.times_played - b.times_played;
+                            })
+                        }
+                    break;
+                }           
+            },
             
             filterTags: function() {
                 this.reset();
                 var tags = String(this.checkedTags).replace(/,/g, "+").replace(/ /g, "_");
-                axios.get("/api/stories/tags/" + tags)
-                .then(response=>{
-                    this.displayStories = (response.data);
-                    console.log(response.data);
-                })
-                .catch(response => {
-                    this.returnData = [];
-                    console.log(response.data);
-                    console.log(response.response);
-                })
+                if (!tags == "") {
+                    axios.get("/api/stories/tags/" + tags)
+                    .then(response=>{
+                        this.displayStories = (response.data);
+                        console.log(response.data);
+                    })
+                    .catch(response => {
+                        this.returnData = [];
+                        console.log(response.data);
+                        console.log(response.response);
+                    })
+                } else {
+                    this.reset();
+                }
+                
             },
 
             reset: function() {
@@ -148,22 +231,59 @@
             }
         },
         mounted() {
+            
             axios.get("/api/stories")
             .then(response=>{
                 this.stories = Object.values(response.data);
-                this.displayStories = this.stories;
             })
             .catch(response => {
                 console.log(response.data);
             }),
+
             axios.get("/api/tags")
             .then(response=>{
                 this.tags = Object.values(response.data);
             })
             .catch(response => {
                 console.log(response.data);
+            }),
+
+            axios.get("/api/misty/stories_played/")
+            .then(response=>{
+                this.history = (response.data);
+
+                this.history.sort((a, b) => {
+                    return new Date(a.lastPlayed) - new Date(b.lastPlayed);
+                });
+
+                //for each story, find when most recently played
+                for(let i=1; i<=this.stories.length; i++) {
+                    //find the first index in histories that has the same id
+                    var firstIndex = -1;
+                    var found = false;
+
+                    for (let j=0; j<this.history.length; j++) {
+                        if (found == true) {
+                            break;
+                        }
+                        if (this.history[j].id == i) {
+                            found = true; 
+                            firstIndex = j;
+                        }
+                    }
+                    if (found) {
+                        this.stories[i-1].playOrder = firstIndex;
+                    } else {
+                        this.stories[i-1].playOrder = Number.MAX_SAFE_INTEGER;
+                    }
+                }
+
+                this.displayStories = this.stories;
             })
-         
+            .catch(response => {
+                console.log(response.response);
+            })
+        
         }   
     });            
 </script>
