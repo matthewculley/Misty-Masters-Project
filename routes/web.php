@@ -16,7 +16,7 @@ use App\Http\Controllers\StoryController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('stories.index');
 });
 
 Route::get('/stories', [StoryController::class, 'index'])
@@ -24,6 +24,9 @@ Route::get('/stories', [StoryController::class, 'index'])
 
 Route::get('/stories/{id}', [StoryController::class, 'show'])
     ->name('stories.show');
+
+Route::get('/add', [StoryController::class, 'show'])
+    ->name('stories.add');
 
 Route::get('/misty', function (){
     return view('misty.show');

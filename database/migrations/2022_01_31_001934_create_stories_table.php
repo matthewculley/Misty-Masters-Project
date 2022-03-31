@@ -23,6 +23,7 @@ class CreateStoriesTable extends Migration
             $table->integer("min_interactivity");
             $table->integer("max_interactivity");
             $table->integer("times_played");
+            $table->string("thumbnail_path");
         });
     }
 
