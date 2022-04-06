@@ -5,7 +5,9 @@
     @section('content')
     <div id="root" class="container mx-auto">
         <div class="row">
-            <h1>Stories</h1>
+            <div class="row">
+                <h1>Stories <a href="/add" class="btn btn-outline-primary"><h5>Add a new story</h5></a></h1>
+            </div>
             <ul id="search_sort" class="list-group list-group-horizontal">
                 <!-- <div class="row"> -->
                 <li id="search" class="list-group-item">
@@ -53,8 +55,6 @@
                         <h3> @{{ s.title }} </h1>
                     </div>
                     <div class="container card-body"> 
-                        <!-- <img src="img/IMG_0155.JPG" style="max-width:100%; max-height:50%;"> -->
-
                         <img v-bind:src="s.thumbnail_path" style="max-width:100%; max-height:50%;">
                         <p> @{{ s.description }} </p>
                         <a :href="/stories/ + s.id"> Learn more. </a>

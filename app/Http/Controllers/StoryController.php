@@ -49,7 +49,7 @@ class StoryController extends Controller
                     $addToArray = false;
                 }
             }
-            
+
             if ($addToArray == true) {
                 array_push($returnStories, $s);
             }
@@ -65,7 +65,7 @@ class StoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('stories.add');
     }
 
     public function apiCreateReview(Request $request){
