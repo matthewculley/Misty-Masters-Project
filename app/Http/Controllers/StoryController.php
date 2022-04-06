@@ -68,6 +68,22 @@ class StoryController extends Controller
         return view('stories.add');
     }
 
+    public function apiCreate(Request $request) {
+        $story = new Story();
+        $story->title = $request['title'];
+        $story->description = $request['description'];
+        $story->min_suitable_age = $request['min_suitable_age'];
+        $story->max_suitable_age = $request['max_suitable_age'];
+        $story->min_interactivity = $request['min_interactivity'];
+        $story->max_interactivity = $request['max_interactivity'];
+        $story->times_played = 0;
+        $story->thumbnail_path = "img\IMG_0155.JPG";
+
+        $story->save();
+
+        return $story;
+    }
+
     public function apiCreateReview(Request $request){
         $review = new Review();
         $review->review = $request['review'];

@@ -15,15 +15,15 @@
         <form style="width:50%;" class="mx-auto">
             <div>
                 <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" placeholder="Title" id="title">
+                <input v-model="title" type="text" class="form-control" placeholder="Title" id="title">
             </div>
             <div>
                 <label for="desc" class="form-label">Story description</label>
-                <textarea class="form-control" placeholder="Description" id="desc"></textarea>
+                <textarea v-model="desc" class="form-control" placeholder="Description" id="desc"></textarea>
             </div>
             <div>
                 <label for="inter" class="form-label">Interactivity level</label>
-                <input type="number" class="form-control" placeholder="Interactivity" id="inter">
+                <input v-model="inter" type="number" class="form-control" placeholder="Interactivity" id="inter">
             </div>
             <div>
                 <label for="thumb" class="form-label">Thumbnail Image</label>
@@ -31,7 +31,7 @@
             </div>
             <div>
                 <label for="misty_files" class="form-label">Misty story files</label>
-                <input type="file" class="form-control" placeholder="Misty story zip" id="misty_files">
+                <input type="file" class="form-control" placeholder="Misty story zip" id="skillFile">
             </div>
             <div>
                 <label for="tagList" class="form-label">Story tags </label>
@@ -41,10 +41,21 @@
                         <label :for="s.tag"> @{{ s.tag }} </label>
                     </li>
                 </ul>
-            </div>       
+            </div>
+            <div>
+                <label for="title" class="form-label">Misty's IP address</label>
+                <input type="text" class="form-control" placeholder="Misty's IP address" id="ip">
+            </div>
+            <div>
+                <label for="title" class="form-label">Story's unique ID</label>
+                <input type="text" class="form-control" placeholder="Story's unique ID" id="storyId">
+            </div>
+            
+
+
             <div>
                 <br>
-                <input type="submit" id="add" class="form-control" placeholder="Add story">
+                <input type="button" id="add" class="form-control" placeholder="Add story" @click="createStory">
             </div>
         </form>
     </div>
@@ -60,6 +71,10 @@
                 inter: "",
                 tags: [],
                 allTags: [],
+                ip: "", 
+                storyId: "",
+                minAge: 5,
+                maxAge: 10,
                 
             },
             methods: {
@@ -67,8 +82,78 @@
                     this.helpVisible = !this.helpVisible;
                     this.toggleHelpText = "Show help";
                     if (this.helpVisible) {this.toggleHelpText = "Hide help";}
-                    
+                },
+
+                createStory: function () {
+                    axios.post("/api/stories/add", 
+                    {
+                        title: this.title,
+                        description: this.desc,
+                        min_interactivity: this.inter - 1,
+                        max_interactivity: this.inter + 1,
+                        min_suitable_age: this.minAge,
+                        max_suitable_age: this.maxAge,
+
+                    })
+                    .then(response => {
+                        console.log("created story");
+                        // this.newComment = "";
+                    })
+                    .catch(response => {
+                        console.log(response.response);
+                    })
+                },
+
+                submit: function() {
+                    //add to db
+                    this.createStory();
+                    //add to misty
+                    //cancel any misty running stories
+                    this.cancelSkills();
+
+                    //load the story to misty
+                    this.loadSkill();
+                },
+
+                cancelSkills: function () {
+                    console.log("Cancelling skills");
+                    returnValue = false;
+                    axios.post('http://' + this.ip + '/api/skills/cancel', {
+                        skill: null, 
+                    })
+                    .then( response =>{
+                        console.log(response);
+                        returnValue = true;
+                    })
+                    .catch(response => {
+                        console.log(response.data);
+                    });
+                },
+
+                loadSkill: function () {
+                    console.log("loading skill to misty");
+                    skillId = "";
+                    var formdata = new FormData();
+                    formdata.append("File", document.getElementById('skillFile').files[0], "[PROXY]");
+                    formdata.append("ImmediatelyApply", "true");
+                    formdata.append("OverwriteExisting", "true");
+                    axios.post('http://' + ip + '/api/skills', formdata, {
+                        headers: {
+                        'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    .then( response => {
+                        console.log("Uploaded skill");
+                        console.log(response);
+                        skillId = response.data['result'];
+                    })
+                    .catch(response => {
+                        console.log(response.data);
+                    });
+
+                    return skillId;
                 }
+                
             },
             mounted() {
                 axios.get("/api/tags")
