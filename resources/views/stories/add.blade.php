@@ -94,6 +94,7 @@
                     data.append("min_suitable_age", this.minAge);
                     data.append("max_suitable_age", this.maxAge);
                     data.append("file", document.getElementById('thumb').files[0]);
+                    data.append("tags", this.tags);
 
                     console.log(document.getElementById('thumb').files[0].name);
                     

@@ -79,6 +79,18 @@ class StoryController extends Controller
         $story->times_played = 0;
         $story->thumbnail_path = "img/".$request->file('file')->store('');
 
+       
+
+        $story->save();
+
+        $tags = explode(',', $request['tags']);
+        foreach($tags as $t) {
+            $tag = null;
+            $tag = Tag::where("tag", $t)->get()->first();
+            if ($tag != null) {
+                $story->tags()->attach($tag->id);
+            }
+        }
         $story->save();
 
         return ['success'=> $story->thumbnail_path];
