@@ -55,7 +55,7 @@
                         <h3> @{{ s.title }} </h1>
                     </div>
                     <div class="container card-body"> 
-                        <img v-bind:src="s.thumbnail_path" style="max-width:100%; max-height:50%;">
+                        <img v-bind:src="s.thumbnail_path" style="max-width:250px; max-height:200px;">
                         <p> @{{ s.description }} </p>
                         <a :href="/stories/ + s.id"> Learn more. </a>
                     </div>

@@ -85,23 +85,34 @@
                 },
 
                 createStory: function () {
-                    axios.post("/api/stories/add", 
-                    {
-                        title: this.title,
-                        description: this.desc,
-                        min_interactivity: this.inter - 1,
-                        max_interactivity: this.inter + 1,
-                        min_suitable_age: this.minAge,
-                        max_suitable_age: this.maxAge,
+                    
+                    let data = new FormData();
+                    data.append("title", this.title);
+                    data.append("description", this.desc);
+                    data.append("min_interactivity", this.inter-1);
+                    data.append("max_interactivity", this.inter+1);
+                    data.append("min_suitable_age", this.minAge);
+                    data.append("max_suitable_age", this.maxAge);
+                    data.append("file", document.getElementById('thumb').files[0]);
 
-                    })
+                    console.log(document.getElementById('thumb').files[0].name);
+                    
+                    const config = {
+                        headers: {
+                            'content-type': 'multipart/form-data'
+                        }
+                    }
+
+                    axios.post("/api/stories/add", data, config)
                     .then(response => {
                         console.log("created story");
                         // this.newComment = "";
+                        console.log(response);
+
                     })
                     .catch(response => {
                         console.log(response.response);
-                    })
+                    });
                 },
 
                 submit: function() {
@@ -159,7 +170,6 @@
                 axios.get("/api/tags")
                 .then(response=>{
                     this.allTags = Object.values(response.data);
-                    console.log(response.data);
                 })
                 .catch(response => {
                     console.log(response.data);

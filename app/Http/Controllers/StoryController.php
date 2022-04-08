@@ -77,11 +77,11 @@ class StoryController extends Controller
         $story->min_interactivity = $request['min_interactivity'];
         $story->max_interactivity = $request['max_interactivity'];
         $story->times_played = 0;
-        $story->thumbnail_path = "img\IMG_0155.JPG";
+        $story->thumbnail_path = "img/".$request->file('file')->store('');
 
         $story->save();
 
-        return $story;
+        return ['success'=> $story->thumbnail_path];
     }
 
     public function apiCreateReview(Request $request){
