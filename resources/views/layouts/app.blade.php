@@ -11,6 +11,23 @@
 
     </head>
     <body>
+        <nav class="navbar navbar-expand-sm bg-primary sticky-top">
+            <div class="container-fluid text-light">
+                <!-- Links -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="#">Stories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="#">Add Story</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="#">Misty</a>
+                    </li>
+                </ul>
+            </div>
+        </nav> 
+        <br> 
         @yield('content')
     </body>
 </html>

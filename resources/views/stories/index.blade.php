@@ -52,10 +52,10 @@
             <div id="results" class="row container">
                 <div v-for="s in displayStories" :key="s.title" class="card d-flex flex-wrap m-1" style="width:300px; height:400px">
                     <div class="card-header bg-light"> 
-                        <h3> @{{ s.title }} </h1>
+                        <h3> @{{ s.title }} </h3>
                     </div>
                     <div class="container card-body"> 
-                        <img v-bind:src="s.thumbnail_path" style="max-width:250px; max-height:200px;">
+                        <img v-bind:src="s.thumbnail_path" class="img-thumbnail" style="max-width:250px; max-height:200px;">
                         <p> @{{ s.description }} </p>
                         <a :href="/stories/ + s.id"> Learn more. </a>
                     </div>

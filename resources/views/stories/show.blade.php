@@ -3,58 +3,67 @@
 @section('title', 'Stories')
 
 @section('content')
-<div id="root">
-    <h3>@{{ story.title }} </h3>
-    <h4>@{{ story.description}}</h4>
-    <ul> 
-        <li>Played: @{{ story.times_played }} times</li>
-        <li>Average Rating: @{{ averageRating }}</li>
-    </ul>
-    <h3>Play Story</h3>
-    <label>Interactivity: </label>
-    <label for="interactivity0">0</label>
-    <input type="radio" v-model="interactivity" id="interactivity0" name="interactivity" value="0">
-    <label for="interactivity1">1</label>
-    <input type="radio" v-model="interactivity" id="interactivity1" name="interactivity" value="1">
-    <label for="interactivity2">2</label>
-    <input type="radio" v-model="interactivity" id="interactivity2" name="interactivity" value="2">
-    <label for="interactivity3">3</label>
-    <input type="radio" v-model="interactivity" id="interactivity3" name="interactivity" value="3">
-    <label for="interactivity4">4</label>
-    <input type="radio" v-model="interactivity" id="interactivity4" name="interactivity" value="4">
-    <label for="interactivity5">5</label>
-    <input type="radio" v-model="interactivity" id="interactivity5" name="interactivity" value="5">
-    <input type="submit" value="Play" @click="playStory"></input>
-    <h3>Reviews</h3>
-    <div class="addReview">
-        <h4>Add Review</h4>
-        <textarea type="text" id="input" style="width:100%" v-model="newReview"></textarea>
-        <p>Rating</p>
-        <label for="rating0">0</label>
-        <input type="radio" v-model="newRating" id="rating0" name="rating" value="0">
-        <label for="rating1">1</label>
-        <input type="radio" v-model="newRating" id="rating1" name="rating" value="1">
-        <label for="rating2">2</label>
-        <input type="radio" v-model="newRating" id="rating2" name="rating" value="2">
-        <label for="rating3">3</label>
-        <input type="radio" v-model="newRating" id="rating3" name="rating" value="3">
-        <label for="rating4">4</label>
-        <input type="radio" v-model="newRating" id="rating4" name="rating" value="4">
-        <label for="rating5">5</label>
-        <input type="radio" v-model="newRating" id="rating4" name="rating" value="5">
+    <div id="root" >
+        <div class="mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
+            <div class="card-header bg-light"> 
+                <h3> @{{ story.title }} </h1>
+            </div>
+            <div class="container card-body"> 
+                <img v-bind:src="thumbnail_path" class="img-thumbnail" style="width:100%;">
+                <br><br>
+                <p><strong>Description:</strong> @{{ story.description }}</p>
+                <p><strong>Played:</strong> @{{ story.times_played }}.</p>
+                <p><strong>Average rating:</strong> @{{ averageRating  }}</p>
+            </div>
+        </div> 
+        <div class="row mx-auto" style="width:50%;">
+            <div class="col mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
+                <div class="card-header bg-light"> 
+                    <h3>Play Story</h3>
+                </div>
+                <div class="container card-body"> 
+                    <label for="inter">Interactivity: @{{ interactivity }} </label>
+                    <br>
+                    <input type="range" style="width:50%;" class="form-range" min="0" max="5" id="inter" v-model="interactivity">
+                    <br>
+                    <button type="submit" class="btn btn-outline-primary" value="Play" @click="playStory">Play Story</button>
+                </div>
+            </div> 
+            <div class="col mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
+                <div class="card-header bg-light"> 
+                    <h3>Add Review</h3>
+                </div>
+                <div class="container card-body"> 
+                    <label for="input">Review: </label>
+                    <br>
+                    <textarea type="text" id="input" style="width:100%" v-model="newReview"></textarea>
+                    <br>
+                    <label for="rating">Rating: @{{ newRating }}</label>
+                    <br>
+                    <input type="range" style="width:100%" class="form-range" min="0" max="5" id="rating" v-model="newRating">
+                    <br>
+                    <input type="submit" @click="createReview">               
+                </div>
+            </div> 
+        </div>
         
-        <br><br>
-        <input type="submit" @click="createReview">
-    </div>
-    <ul v-for="review in reviews" :key="review.review">
-        <li>@{{ review.review }}</li>
-        <li>@{{ review.rating }}</li>
-    </ul>
+        <!-- <ul v-for="review in reviews" :key="review.review">
+            <li>@{{ review.review }}</li>
+            <li>@{{ review.rating }}</li>
+        </ul> -->
+        <div class="mx-auto" style="width:50%;">
+            <div v-for="review in reviews" :key="review.review" class="mx-auto card d-flex flex-wrap m-1" >
+                <div class="container card-body"> 
+                    <p><strong>Review:</strong> @{{ review.review }}</p>     
+                    <p><strong>Rating:</strong> @{{ review.rating }}</p>     
+                </div>
+            </div> 
+        </div>
 
-    <h3>Play history</h3>
-    <ul v-for="history in histories" :key="history.last_played">
-        <li>@{{ history.last_played }}</li>
-    </ul>
+        <h3>Play history</h3>
+        <ul v-for="history in histories" :key="history.last_played">
+            <li>@{{ history.last_played }}</li>
+        </ul>
        
 </div>
 <script>
@@ -62,6 +71,7 @@
         el: "#root",
         data: {
             story: [],
+            thumbnail_path: "",
             reviews: [],
             averageRating: 0,
             newReview: "",
@@ -78,7 +88,9 @@
                     story_id: {{ $story->id }},
                 })
                 .then(response => {
-                   
+                   this.updateReviews();
+                   this.newRating = 0;
+                   this.newReview = "";
                 })
                 .catch(response => {
                     console.log(response);
@@ -97,31 +109,50 @@
                 .catch(response => {
                     console.log(response.response);
                 })
+            },
 
-
+            updateReviews: function () {
+                axios.get("/api/stories/" + {{ $story->id }} + "/reviews")
+                .then(response=>{
+                    this.reviews = Object.values(response.data);
+                    this.reviews.reverse();
+                    allReviews = 0;
+                    for(let i=0; i<this.reviews.length; i++) {
+                        allReviews += this.reviews[i].rating;
+                    }
+                    this.averageRating = (allReviews / this.reviews.length).toPrecision(2);
+                })
+                .catch(response => {
+                    console.log(response.data);
+                })
             }
         },
         mounted() {
-            axios.get("/api/stories/" + {{ $story->id }})
-            .then(response=>{
-                this.story = response.data;
-            })
-            .catch(response => {
-                console.log(response.data);
-            })
-
             axios.get("/api/stories/" + {{ $story->id }} + "/reviews")
             .then(response=>{
                 this.reviews = Object.values(response.data);
-                allReviews = 0;
-                for(let i=0; i<this.reviews.length; i++) {
-                    allReviews += this.reviews[i].rating;
-                }
-                this.averageRating = (allReviews / this.reviews.length, 2).toPrecision(2);
+                this.reviews.reverse();
+
+                this.calculateAverageRating();
             })
             .catch(response => {
                 console.log(response.data);
             }),
+            
+            axios.get("/api/stories/" + {{ $story->id }})
+            .then(response=>{
+                this.story = response.data;
+                this.thumbnail_path = "/" + this.story.thumbnail_path;
+
+                allReviews = 0;
+                    for(let i=0; i<this.reviews.length; i++) {
+                        allReviews += this.reviews[i].rating;
+                    }
+                    this.averageRating = (allReviews / this.reviews.length).toPrecision(2);
+            })
+            .catch(response => {
+                console.log(response.data);
+            }),             
 
             axios.get("/api/stories/" + {{ $story->id }} + "/history")
             .then(response=>{
