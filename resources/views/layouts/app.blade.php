@@ -29,5 +29,8 @@
         </nav> 
         <br> 
         @yield('content')
+        <br>
+        <br>
+        <br>
     </body>
 </html>

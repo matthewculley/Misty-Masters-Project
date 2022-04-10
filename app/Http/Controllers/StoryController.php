@@ -151,7 +151,24 @@ class StoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $story = Story::findOrFail($id);
+        return view('stories.edit', ['story' => $story]); 
+    }
+
+    public function apiEdit(Request $request)
+    {
+        $story = Story::findOrFail($request['id']);        
+        $story->title = $request['title'];
+        $story->description = $request['description'];
+        $story->min_suitable_age = $request['min_suitable_age'];
+        $story->max_suitable_age = $request['max_suitable_age'];
+        $story->min_interactivity = $request['min_interactivity'];
+        $story->max_interactivity = $request['max_interactivity'];
+        // $story->thumbnail_path = $request->file('file')->store(''); //todo update remove leading img/ or add to new 
+
+        $story->save();
+
+        return $story;
     }
 
     /**
@@ -161,7 +178,7 @@ class StoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update( $id)
     {
         //
     }

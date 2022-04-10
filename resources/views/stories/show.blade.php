@@ -6,7 +6,7 @@
     <div id="root" >
         <div class="mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
             <div class="card-header bg-light"> 
-                <h3> @{{ story.title }} </h1>
+                <h3> @{{ story.title }} </h3>
             </div>
             <div class="container card-body"> 
                 <img v-bind:src="thumbnail_path" class="img-thumbnail" style="width:100%;">
@@ -19,14 +19,25 @@
         <div class="row mx-auto" style="width:50%;">
             <div class="col mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
                 <div class="card-header bg-light"> 
-                    <h3>Play Story</h3>
+                    <h3>Story Options</h3>
                 </div>
-                <div class="container card-body"> 
-                    <label for="inter">Interactivity: @{{ interactivity }} </label>
-                    <br>
-                    <input type="range" style="width:50%;" class="form-range" min="0" max="5" id="inter" v-model="interactivity">
-                    <br>
-                    <button type="submit" class="btn btn-outline-primary" value="Play" @click="playStory">Play Story</button>
+                <div class="row container card-body"> 
+                    <div class="col">
+                        <h4>Play Story</h4>
+                        <label for="inter">Interactivity: @{{ interactivity }} </label>
+                        <br>
+                        <input type="range" style="width:100%;" class="form-range" min="0" max="5" id="inter" v-model="interactivity">
+                        <br>
+                        <button type="submit" class="btn btn-outline-primary" value="Play" @click="playStory">Play Story</button>
+                    </div>       
+                    <div class="col">           
+                        <h5>Edit Story</h5>
+                        <button type="submit" class="btn btn-outline-primary" value="Edit" @click="editStory">Edit Story</button>
+                    </div>
+                    <div class="col">   
+                        <h4>Toggle Comments / Play History</h4>        
+                        <button type="submit" class="btn btn-outline-primary" value="Edit" @click="toggle">Toggle</button>
+                    </div>
                 </div>
             </div> 
             <div class="col mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
@@ -42,16 +53,16 @@
                     <br>
                     <input type="range" style="width:100%" class="form-range" min="0" max="5" id="rating" v-model="newRating">
                     <br>
-                    <input type="submit" @click="createReview">               
+                    <input type="submit" @click="createReview">    
+                   
                 </div>
             </div> 
         </div>
         
-        <!-- <ul v-for="review in reviews" :key="review.review">
-            <li>@{{ review.review }}</li>
-            <li>@{{ review.rating }}</li>
-        </ul> -->
-        <div class="mx-auto" style="width:50%;">
+        <div class="container">
+
+</div>
+        <div v-if="commentsVisible" class="mx-auto" style="width:50%;">
             <div v-for="review in reviews" :key="review.review" class="mx-auto card d-flex flex-wrap m-1" >
                 <div class="container card-body"> 
                     <p><strong>Review:</strong> @{{ review.review }}</p>     
@@ -60,16 +71,28 @@
             </div> 
         </div>
 
-        <h3>Play history</h3>
-        <ul v-for="history in histories" :key="history.last_played">
-            <li>@{{ history.last_played }}</li>
-        </ul>
+        <div v-if="historyVisible" class="mx-auto" style="width:50%;">
+            <p><strong>Last played:</strong> @{{ histories[0].last_played }}</p>     
+            <button type="submit" class="btn btn-outline-primary" value="Play" @click="toggelFullHistory">Show full history</button>
+
+
+            <div v-if="seeFullHistory" v-for="history in histories" :key="history.last_played" class="mx-auto card d-flex flex-wrap m-1" >
+                <div class="container card-body"> 
+                    <p><strong>Played:</strong> @{{ history.last_played }}</p>     
+                </div>
+            </div> 
+        </div>
+
+    
        
 </div>
 <script>
     var app = new Vue({
         el: "#root",
         data: {
+            historyVisible: false,
+            seeFullHistory: false,
+            commentsVisible: true,  
             story: [],
             thumbnail_path: "",
             reviews: [],
@@ -80,6 +103,19 @@
             histories: {},
         },
         methods: {
+            toggle: function() {
+                this.historyVisible = !this.historyVisible;
+                this.commentsVisible = !this.commentsVisible;                
+            },
+
+            toggelFullHistory: function() {
+                this.seeFullHistory = !this.seeFullHistory;
+            },
+
+            editStory: function(){
+                window.location.href = '/stories/edit/' + this.story.id;
+            },
+
             createReview: function() {
                 axios.post("/api/stories/" + {{ $story->id }} + "/addReview", 
                 {
@@ -97,6 +133,7 @@
                     console.log(response.response);
                 })
             },
+
             playStory: function() {
                 console.log("Playing story: " + "{{ $story->title }}" + ", interactivity level: " + this.interactivity);
                 axios.post("/api/stories/" + "{{ $story->id }}" + "/play", 

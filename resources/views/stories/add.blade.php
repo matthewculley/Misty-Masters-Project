@@ -50,9 +50,6 @@
                 <label for="title" class="form-label">Story's unique ID</label>
                 <input type="text" class="form-control" placeholder="Story's unique ID" id="storyId">
             </div>
-            
-
-
             <div>
                 <br>
                 <input type="button" id="add" class="form-control" placeholder="Add story" @click="createStory">
@@ -157,7 +154,7 @@
                     .then( response => {
                         console.log("Uploaded skill");
                         console.log(response);
-                        skillId = response.data['result'];
+                       / skillId = response.data['result'];
                     })
                     .catch(response => {
                         console.log(response.data);
