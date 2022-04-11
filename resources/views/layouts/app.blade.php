@@ -16,13 +16,13 @@
                 <!-- Links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="#">Stories</a>
+                        <a class="nav-link text-light" href="/">Stories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="#">Add Story</a>
+                        <a class="nav-link text-light" href="/add">Add Story</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="#">Misty</a>
+                        <a class="nav-link text-light" href="/misty">Misty</a>
                     </li>
                 </ul>
             </div>

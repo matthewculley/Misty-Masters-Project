@@ -154,7 +154,7 @@
                     .then( response => {
                         console.log("Uploaded skill");
                         console.log(response);
-                       / skillId = response.data['result'];
+                        // skillId = response.data['result'];
                     })
                     .catch(response => {
                         console.log(response.data);
