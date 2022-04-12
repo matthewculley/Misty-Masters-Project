@@ -42,10 +42,10 @@ Route::post('stories/{id}/addReview', [StoryController::class, 'apiCreateReview'
 Route::post('stories/{id}/play', [HistoryController::class, 'apiCreate'])
     ->name('api.stories.playStory');
 
-Route::post('stories/add', [StoryController::class, 'apiCreate'])
+Route::post('stories/createStory', [StoryController::class, 'apiCreate'])
     ->name('api.stories.create');
 
-Route::post('stories/edit', [StoryController::class, 'apiEdit'])
+Route::post('stories/editStory', [StoryController::class, 'apiEdit'])
     ->name('api.stories.edit');
 
 Route::get('tags', [TagController::class, 'apiIndex'])

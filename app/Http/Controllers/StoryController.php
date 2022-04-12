@@ -69,19 +69,22 @@ class StoryController extends Controller
     }
 
     public function apiCreate(Request $request) {
+       
         $story = new Story();
         $story->title = $request['title'];
         $story->description = $request['description'];
-        $story->min_suitable_age = $request['min_suitable_age'];
-        $story->max_suitable_age = $request['max_suitable_age'];
         $story->min_interactivity = $request['min_interactivity'];
         $story->max_interactivity = $request['max_interactivity'];
+        $story->min_suitable_age = $request['min_suitable_age'];
+        $story->max_suitable_age = $request['max_suitable_age'];
         $story->times_played = 0;
-        $story->thumbnail_path = "img/".$request->file('file')->store('');
-
-       
-
+        $story->thumbnail_path = "img/".$request->file('thumb')->store('');
+        $story->misty_skill_id = $request['unique_id'];
+        $story->misty_skill_path = "skills/".$request->file('skill')->store('');
+      
+        
         $story->save();
+
 
         $tags = explode(',', $request['tags']);
         foreach($tags as $t) {
@@ -93,7 +96,9 @@ class StoryController extends Controller
         }
         $story->save();
 
-        return ['success'=> $story->thumbnail_path];
+        return response()->json([
+            'story' => $request,
+        ]);
     }
 
     public function apiCreateReview(Request $request){
@@ -156,15 +161,40 @@ class StoryController extends Controller
     }
 
     public function apiEdit(Request $request)
-    {
-        $story = Story::findOrFail($request['id']);        
+    {   
+        //find old story and delete itf
+        $story = Story::findOrFail($request['id']);  
+        
+        //add new story
         $story->title = $request['title'];
         $story->description = $request['description'];
-        $story->min_suitable_age = $request['min_suitable_age'];
-        $story->max_suitable_age = $request['max_suitable_age'];
         $story->min_interactivity = $request['min_interactivity'];
         $story->max_interactivity = $request['max_interactivity'];
-        // $story->thumbnail_path = $request->file('file')->store(''); //todo update remove leading img/ or add to new 
+        $story->min_suitable_age = $request['min_suitable_age'];
+        $story->max_suitable_age = $request['max_suitable_age'];
+        $story->times_played = 0;
+        $story->misty_skill_id = $request['unique_id'];
+
+        if (!$request['skill'] == -1) {
+            $story->thumbnail_path = "img/".$request->file('thumb')->store('');
+        }
+
+        if (!$request['skill'] == -1) {
+            $story->thumbnail_path = "skills/".$request->file('skill')->store('');
+        }
+
+        // SQLSTATE[HY000]: General error: 1364 Field 'thumbnail_path' doesn't have a default value (SQL: insert into `stories` (`title`, `description`, `min_interactivity`, `max_interactivity`, `min_suitable_age`, `max_suitable_age`, `times_played`, `misty_skill_id`, `updated_at`, `created_at`) values (Testessa, dsfsdf, 1, 3, 12, 11, 0, undefined, 2022-04-12 14:50:32, 2022-04-12 14:50:32))
+
+        $story->tags()->detach();
+
+        $tags = explode(',', $request['tags']);
+        foreach($tags as $t) {
+            $tag = null;
+            $tag = Tag::where("tag", $t)->get()->first();
+            if ($tag != null) {
+                $story->tags()->attach($tag->id);
+            }
+        }
 
         $story->save();
 

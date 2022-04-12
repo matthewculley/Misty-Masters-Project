@@ -7,29 +7,32 @@
 <div id="root" class="container mx-auto">
     <div class="row container">
     <h1> Edit story </h1>
-        <form style="width:50%;" class="mx-auto">
+    <div style="width:50%;" class="mx-auto">
+            <h3>Story Details</h3>
             <div>
-                <label for="title" class="form-label">Title</label>
+                <label for="title" class="form-label">Title:</label>
                 <input v-model="title" type="text" class="form-control" placeholder="Title" id="title">
             </div>
             <div>
-                <label for="desc" class="form-label">Story description</label>
+                <label for="desc" class="form-label">Story description:</label>
                 <textarea v-model="desc" class="form-control" placeholder="Description" id="desc"></textarea>
             </div>
             <div>
-                <label for="inter" class="form-label">Interactivity level</label>
-                <input v-model="inter" type="number" class="form-control" placeholder="Interactivity" id="inter">
+                <label for="inter" class="form-label">Interactivity level: @{{ inter }}</label>
+                <input type="range" style="width:100%;" class="form-range" min="0" max="5" id="inter" v-model="inter">
             </div>
             <div>
-                <label for="thumb" class="form-label">Thumbnail Image</label>
+                <label for="minAge" class="form-label">Minimum suitable age: @{{ minAge }}</label>
+                <input type="range" style="width:100%;" class="form-range" min="0" max="15" id="minAge" v-model="minAge">
+                <label for="maxAge" class="form-label">Maximum suitable age: @{{ maxAge }}</label>
+                <input type="range" style="width:100%;" class="form-range" min="0" max="15" id="maxAge" v-model="maxAge">
+            </div>
+            <div>
+                <label for="thumb" class="form-label">Thumbnail Image:</label>
                 <input type="file" class="form-control" placeholder="Thumbnail image" id="thumb">
             </div>
             <div>
-                <label for="misty_files" class="form-label">Misty story files</label>
-                <input type="file" class="form-control" placeholder="Misty story zip" id="skillFile">
-            </div>
-            <div>
-                <label for="tagList" class="form-label">Story tags </label>
+                <label for="tagList" class="form-label">Story tags:</label>
                 <ul id="tagList" class="list-group list-group-horizontal" >
                     <li v-for="s in allTags" class="list-group-item">
                         <input :id="s.tag" type="checkbox" :value="s.tag" v-model="tags"></input>
@@ -37,19 +40,21 @@
                     </li>
                 </ul>
             </div>
+            <br>
+            <h3>Misty Details</h3>
             <div>
-                <label for="title" class="form-label">Misty's IP address</label>
-                <input type="text" class="form-control" placeholder="Misty's IP address" id="ip">
+                <label for="title" class="form-label">Story's unique ID:</label>
+                <input type="text" class="form-control" placeholder="Story's unique ID" v-model="unique_id" id="skillId">
             </div>
             <div>
-                <label for="title" class="form-label">Story's unique ID</label>
-                <input type="text" class="form-control" placeholder="Story's unique ID" id="storyId">
+                <label for="misty_files" class="form-label">Misty story files:</label>
+                <input type="file" class="form-control" placeholder="Misty story zip" id="skill">
             </div>
             <div>
                 <br>
-                <input type="button" id="add" class="form-control" placeholder="Add story" @click="editStory">
+                <button id="add" class="btn btn-primary form-control" @click="editStory">Edit Story</button>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 <script>
@@ -59,47 +64,65 @@
                 story: {},
                 title: "",
                 desc: "",
-                inter: "",
+                inter: 0,
                 tags: [],
                 allTags: [],
-                ip: "", 
-                storyId: "",
-                minAge: 5,
-                maxAge: 10,
+                unique_id: "",
+                minAge: 0,
+                maxAge: 0,
                 thumbnail_path: "",
+                skill_path: "",
+                
             },
             methods: {
                
+                updateSkill: function () {
+                    console.log("updated skill");
+                },
+
                 editStory: function () {
                     
-                    let data = new FormData();
-                    data.append("id", Number(this.story.id));
-                    data.append("title", this.title);
-                    data.append("description", this.desc);
-                    data.append("min_interactivity", this.inter-1);
-                    data.append("max_interactivity", this.inter+1);
-                    data.append("min_suitable_age", this.minAge);
-                    data.append("max_suitable_age", this.maxAge);
-                    data.append("file", this.thumbnail_path);
-                    data.append("tags", this.tags);
+                    let formData = new FormData();
+                    formData.append("id", this.story.id);
+                    formData.append("title", this.title);
+                    formData.append("description", this.desc);
+                    formData.append("min_interactivity", this.inter-1);
+                    formData.append("max_interactivity", this.inter+1);
+                    formData.append("min_suitable_age", this.minAge);
+                    formData.append("max_suitable_age", this.maxAge);
+                    formData.append("tags", this.tags);
+                    formData.append('unique_id', this.skillId);
 
-                    
-                    const config = {
-                        headers: {
-                            'content-type': 'multipart/form-data'
-                        }   
+                    //if no new files 
+                    if (document.getElementById('skill').files.length === 0) {
+                        formData.append("skill", -1);
+                    } else {
+                        formData.append("skill", document.getElementById('skill').files[0]);
                     }
 
-                    // php no likey sending files with put 
-                    axios.post("/api/stories/edit", data, config)
+                    if (document.getElementById('thumb').files.length === 0) {
+                        formData.append("thumb", -1);
+                    } else {
+                        formData.append("thumb", document.getElementById('thumb').files[0]);
+                    }
+
+
+                    axios.post("/api/stories/editStory", 
+                    formData, 
+                    {
+                        'content-type': 'multipart/form-data'
+                    })
                     .then(response => {
+                        console.log("edited story");
                         console.log(response);
-                        // return user to story details screen
-                        window.location.href = '/stories/' + this.story.id;
                     })
                     .catch(response => {
+                        console.log(response);
                         console.log(response.response);
                     })
+
+                    
+                    
                     
                 },  
 
@@ -109,17 +132,22 @@
             mounted() {
                 axios.get("/api/stories/" + {{ $story->id }})
                 .then(response=>{
-                    this.story = response.data;
 
+                    this.story = response.data;
                     story = this.story;
-                    this.storyId = story.id;
+
                     this.title = story.title;
                     this.desc = story.description;
                     this.inter = story.min_interactivity;
+                    this.inter = story.min_interactivity;
+                    this.tags = story.tags;
+                    this.unique_id = story.misty_skill_id;
+                    this.minAge = story.min_suitable_age;
+                    this.maxAge = story.max_suitable_age;
+                    this.thumbnail_path = this.story.thumbnail_path;
+                    this.skill_path = this.story.skill_path;
 
-                    this.thumbnail_path = "/" + this.story.thumbnail_path;
-
-
+                    
                 })
                 .catch(response => {
                     console.log(response.data);

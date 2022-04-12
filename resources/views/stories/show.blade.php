@@ -26,7 +26,7 @@
                         <h4>Play Story</h4>
                         <label for="inter">Interactivity: @{{ interactivity }} </label>
                         <br>
-                        <input type="range" style="width:100%;" class="form-range" min="0" max="5" id="inter" v-model="interactivity">
+                        <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="inter" v-model="interactivity">
                         <br>
                         <button type="submit" class="btn btn-outline-primary" value="Play" @click="playStory">Play Story</button>
                     </div>       
@@ -51,10 +51,9 @@
                     <br>
                     <label for="rating">Rating: @{{ newRating }}</label>
                     <br>
-                    <input type="range" style="width:100%" class="form-range" min="0" max="5" id="rating" v-model="newRating">
+                    <input type="range" style="width:100%" class="form-range" min="1" max="5" id="rating" v-model="newRating">
                     <br>
-                    <input type="submit" @click="createReview">    
-                   
+                    <button type="submit" class="btn btn-outline-primary" value="submit" @click="createReview">Submit</button>                   
                 </div>
             </div> 
         </div>
@@ -98,8 +97,8 @@
             reviews: [],
             averageRating: 0,
             newReview: "",
-            newRating: 0,
-            interactivity: 0,
+            newRating: 1,
+            interactivity: 1,
             histories: {},
         },
         methods: {

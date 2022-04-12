@@ -222,6 +222,7 @@
                         //get all stories with those tags
                         axios.get("/api/stories/tags/" + tags)
                         .then(response=>{
+                            console.log(response.response);
                             var validStories = [];
                             for (let i=0; i<response.data.length; i++) {
                                 var inDisplayStories = false;
@@ -238,7 +239,7 @@
                             this.displayStories = (validStories);
                             // this.sort();
                             // this.displayStories = (response.data);
-                            console.log(validStories);
+                            
                         })
                         .catch(response => {
                             this.returnData = [];
@@ -270,6 +271,7 @@
                 axios.get("/api/stories")
                 .then(response=>{
                     this.stories = Object.values(response.data);
+                    console.log(response);
                 })
                 .catch(response => {
                     console.log(response.data);
@@ -278,6 +280,8 @@
                 axios.get("/api/tags")
                 .then(response=>{
                     this.tags = Object.values(response.data);
+                    console.log(response);
+
                 })
                 .catch(response => {
                     console.log(response.data);
@@ -289,6 +293,8 @@
 
                     this.history.sort((a, b) => {
                         return new Date(a.lastPlayed) - new Date(b.lastPlayed);
+                        console.log(response);
+
                     });
 
                     //for each story, find when most recently played

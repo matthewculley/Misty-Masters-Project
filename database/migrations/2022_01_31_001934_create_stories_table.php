@@ -24,6 +24,8 @@ class CreateStoriesTable extends Migration
             $table->integer("max_interactivity");
             $table->integer("times_played");
             $table->string("thumbnail_path");
+            $table->string("misty_skill_id")->nullable();
+            $table->string("misty_skill_path")->nullable();
         });
     }
 

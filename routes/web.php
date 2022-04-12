@@ -25,9 +25,9 @@ Route::get('/stories', [StoryController::class, 'index'])
 Route::get('/stories/{id}', [StoryController::class, 'show'])
     ->name('stories.show');
 
-    Route::get('/add', function (){
-        return view('stories.add');
-    });
+Route::get('/add', function (){
+    return view('stories.add');
+});
 
 Route::get('stories/edit/{id}', [StoryController::class, 'edit'])
     ->name('stories.edit');
