@@ -30,6 +30,12 @@ Route::get('stories/tags/{tags}', [StoryController::class, 'apiIndexTags'])
 Route::get('stories/{id}', [StoryController::class, 'apiShow'])
     ->name('api.stories.show');
 
+Route::get('stories/skill/{id}', [StoryController::class, 'downloadSkill'])
+    ->name('api.stories.getSkill');
+
+Route::get('stories/{id}/tags', [StoryController::class, 'apiShowTags'])
+    ->name('api.stories.showTags'); 
+
 Route::get('stories/{id}/reviews', [StoryController::class, 'apiShowReviews'])
     ->name('api.stories.showReviews');
     

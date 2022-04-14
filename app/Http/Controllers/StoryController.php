@@ -8,6 +8,8 @@ use App\Models\History;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 
 class StoryController extends Controller
 {
@@ -95,17 +97,24 @@ class StoryController extends Controller
             }
         }
         $story->save();
-
-        return response()->json([
-            'story' => $request,
-        ]);
     }
 
     public function apiCreateReview(Request $request){
+        $validated = $request->validate([
+            'review' => 'nullable|string',
+            'rating' => 'required|integer|min:1|max:5',
+            'story_id' => 'required|integer',
+        ]);
+
+        if ($validated['rating'] == 1 && strlen($validated['review'] == 0)) {
+            
+            return response('A review must be left when the rating is 1', 500)->header('Content-Type', 'text/plain');
+        }
+
         $review = new Review();
-        $review->review = $request['review'];
-        $review->rating = $request['rating'];
-        $review->story_id = $request['story_id'];
+        $review->review = $validated['review'];
+        $review->rating = $validated['rating'];
+        $review->story_id = $validated['story_id'];
         $review->save();
         return $review;
     }
@@ -138,6 +147,49 @@ class StoryController extends Controller
         return $story;
     }
 
+    public function apiShowTags($id) {
+        $story = Story::findOrFail($id);
+        $tags = [];
+        $allTags = $story->tags;
+        
+        return $story->tags;
+    }
+
+    public function downloadSkill($id) {
+        $story = Story::findOrFail($id);
+
+        $file = Storage::disk('public')->get($story->thumbnail_path);
+
+        return response()->json([
+            'thumbnail_path' => 'Abigail',
+            'state' => 'CA',
+        ]);
+
+        // // return response()->json([
+        // //     'name' => 'Abigail',
+        // //     'state' => $file,
+        // // ]);
+        
+        // return (new Response($file, 200))->header('Content-Type', 'image/jpeg');
+
+
+        // $headers = array(
+        //     'Content-Type: image/png',
+        // );
+        // // return response()->file($file, $headers);
+
+        // return response()->download($file, "test", $headers);
+
+       
+
+
+        // $headers = array(
+        //         'Content-Type: application/pdf',
+        //         );
+
+        // return Response::download($file, 'filename.pdf', $headers);
+    }
+
     public function apiShowReviews($id) {
         $reviews = Review::all()->where('story_id', $id); 
         return $reviews;
@@ -160,9 +212,15 @@ class StoryController extends Controller
         return view('stories.edit', ['story' => $story]); 
     }
 
+    public function apiUpdatePlayCounter($id) {
+        $story = Story::findOrFail($request['id']);  
+        $story->times_played = $story->times_played + 1;
+        story->save();
+    }
+
     public function apiEdit(Request $request)
     {   
-        //find old story and delete itf
+        //find old story 
         $story = Story::findOrFail($request['id']);  
         
         //add new story
@@ -172,19 +230,16 @@ class StoryController extends Controller
         $story->max_interactivity = $request['max_interactivity'];
         $story->min_suitable_age = $request['min_suitable_age'];
         $story->max_suitable_age = $request['max_suitable_age'];
-        $story->times_played = 0;
         $story->misty_skill_id = $request['unique_id'];
 
-        if (!$request['skill'] == -1) {
+        if ($request->has('thumb')) {
             $story->thumbnail_path = "img/".$request->file('thumb')->store('');
-        }
+        } 
 
-        if (!$request['skill'] == -1) {
-            $story->thumbnail_path = "skills/".$request->file('skill')->store('');
-        }
-
-        // SQLSTATE[HY000]: General error: 1364 Field 'thumbnail_path' doesn't have a default value (SQL: insert into `stories` (`title`, `description`, `min_interactivity`, `max_interactivity`, `min_suitable_age`, `max_suitable_age`, `times_played`, `misty_skill_id`, `updated_at`, `created_at`) values (Testessa, dsfsdf, 1, 3, 12, 11, 0, undefined, 2022-04-12 14:50:32, 2022-04-12 14:50:32))
-
+        if ($request->has('skill')) {
+            $story->misty_skill_path = "img/".$request->file('skill')->store('');
+        } 
+        
         $story->tags()->detach();
 
         $tags = explode(',', $request['tags']);
@@ -198,7 +253,9 @@ class StoryController extends Controller
 
         $story->save();
 
-        return $story;
+        return response()->json([
+            'thumnailpath' => $story->thumbnail_path,
+        ]);
     }
 
     /**

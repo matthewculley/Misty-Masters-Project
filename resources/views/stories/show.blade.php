@@ -12,8 +12,15 @@
                 <img v-bind:src="thumbnail_path" class="img-thumbnail" style="width:100%;">
                 <br><br>
                 <p><strong>Description:</strong> @{{ story.description }}</p>
-                <p><strong>Played:</strong> @{{ story.times_played }}.</p>
+                <p><strong>Tags:</strong> @{{ tags }}</p>
+                <p><strong>Interactivity range:</strong> @{{ story.min_interactivity  }}-@{{ story.max_interactivity }}</p>
+                <p><strong>Age range:</strong> @{{ story.min_suitable_age  }} - @{{ story.max_suitable_age }} years old.</p>
+                <p><strong>Played:</strong> @{{ story.times_played }} times.</p>
                 <p><strong>Average rating:</strong> @{{ averageRating  }}</p>
+                <p><strong>Misty skill ID:</strong> @{{ story.misty_skill_id  }}</p>
+
+                <button type="submit" class="btn btn-outline-primary" @click="download">Download skill</button>
+
             </div>
         </div> 
         <div class="row mx-auto" style="width:50%;">
@@ -24,18 +31,19 @@
                 <div class="row container card-body"> 
                     <div class="col">
                         <h4>Play Story</h4>
+                        <label for="ip" class="form-label">Mist's IP address:</label>
+                        <input v-model="mistyIP" type="text" class="form-control" placeholder="Misty's IP" id="ip">
                         <label for="inter">Interactivity: @{{ interactivity }} </label>
-                        <br>
                         <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="inter" v-model="interactivity">
                         <br>
                         <button type="submit" class="btn btn-outline-primary" value="Play" @click="playStory">Play Story</button>
                     </div>       
-                    <div class="col">           
+                    <div class="col">   
                         <h5>Edit Story</h5>
                         <button type="submit" class="btn btn-outline-primary" value="Edit" @click="editStory">Edit Story</button>
-                    </div>
-                    <div class="col">   
-                        <h4>Toggle Comments / Play History</h4>        
+                        <br>
+                        <br>
+                        <h5>Toggle Comments / Play History</h5>        
                         <button type="submit" class="btn btn-outline-primary" value="Edit" @click="toggle">Toggle</button>
                     </div>
                 </div>
@@ -81,9 +89,6 @@
                 </div>
             </div> 
         </div>
-
-    
-       
 </div>
 <script>
     var app = new Vue({
@@ -99,7 +104,9 @@
             newReview: "",
             newRating: 1,
             interactivity: 1,
-            histories: {},
+            histories: [],
+            tags: "",
+            mistyIP: "",
         },
         methods: {
             toggle: function() {
@@ -107,11 +114,15 @@
                 this.commentsVisible = !this.commentsVisible;                
             },
 
+            download: function() {
+                window.open("/" + this.story.misty_skill_path, '_blank');              
+            },
+
             toggelFullHistory: function() {
                 this.seeFullHistory = !this.seeFullHistory;
             },
 
-            editStory: function(){
+            editStory: function() {
                 window.location.href = '/stories/edit/' + this.story.id;
             },
 
@@ -123,8 +134,9 @@
                     story_id: {{ $story->id }},
                 })
                 .then(response => {
+                    console.log(response);
                    this.updateReviews();
-                   this.newRating = 0;
+                   this.newRating = 1;
                    this.newReview = "";
                 })
                 .catch(response => {
@@ -133,17 +145,78 @@
                 })
             },
 
+            updateHistory: function() {
+                axios.get("/api/stories/" + {{ $story->id }} + "/history")
+                .then(response=>{
+                    this.histories = Object.values(response.data);
+                })
+                .catch(response => {
+                    console.log(response.response);
+                })
+            },
+
             playStory: function() {
+                
                 console.log("Playing story: " + "{{ $story->title }}" + ", interactivity level: " + this.interactivity);
+
+                //get the skill file
+                skill = null;
+
+
+
+
+
+
+                //upload skill to misty
+                skillId = "";
+
+                var formdata = new FormData();
+                formdata.append("File", skill, "[PROXY]");
+                formdata.append("ImmediatelyApply", "true");
+                formdata.append("OverwriteExisting", "true");
+
+                axios.post('http://' + this.mistyIP + '/api/skills', formdata, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data'
+                    }
+                })
+                .then(function (response) {
+                    console.log("Uploaded skill");
+                    console.log(response);
+                    skillId = response.data['result'];
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+
+
+
+                //play skill on misty
+                axios.post('http://' + ip + '/api/skills/start', {
+                    skill: this.story.misty_skill_id, 
+                    method: 'null'
+                })
+                .then(function (response) {
+                    console.log("Showing emotions")
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });      
+
+                          
+                //update play counter
                 axios.post("/api/stories/" + "{{ $story->id }}" + "/play", 
                 {
                     story_id: {{ $story->id }},
                     last_played: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 })
                 .then(response => {
+                    this.updateHistory();
                 })
                 .catch(response => {
-                    console.log(response.response);
+                    console.log(response);
                 })
             },
 
@@ -188,7 +261,26 @@
             })
             .catch(response => {
                 console.log(response.data);
-            }),             
+            }),  
+            
+            axios.get("/api/stories/" + {{ $story->id }} + "/tags")
+            .then(response=>{
+                tags = Object.values(response.data);
+                console.log(response);
+
+                for (let i=0; i<tags.length; i++) {
+                    if (i > 0) { 
+                        this.tags += ", ";  
+                    }
+
+                    this.tags += tags[i].tag;
+                    // console.log(tags[i].tag);
+
+                }
+            })
+            .catch(response => {
+                console.log(response.response);
+            })
 
             axios.get("/api/stories/" + {{ $story->id }} + "/history")
             .then(response=>{

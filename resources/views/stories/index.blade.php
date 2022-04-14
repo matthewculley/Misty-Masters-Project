@@ -281,7 +281,6 @@
                 .then(response=>{
                     this.tags = Object.values(response.data);
                     console.log(response);
-
                 })
                 .catch(response => {
                     console.log(response.data);
@@ -294,7 +293,6 @@
                     this.history.sort((a, b) => {
                         return new Date(a.lastPlayed) - new Date(b.lastPlayed);
                         console.log(response);
-
                     });
 
                     //for each story, find when most recently played

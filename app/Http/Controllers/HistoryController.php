@@ -42,7 +42,11 @@ class HistoryController extends Controller
     public function apiCreate(Request $request)
     {
         $story_id = $request['id'];
+        // $story = Story::findOrFail($story_id);
+        // $story->times_played = $story->times_played + 1;
+        // $story->save();
         $last_played = $request['last_played'];
+        
         $h = new History();
         $h->story_id = $story_id;
         $h->last_played = $last_played;

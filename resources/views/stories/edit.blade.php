@@ -43,8 +43,8 @@
             <br>
             <h3>Misty Details</h3>
             <div>
-                <label for="title" class="form-label">Story's unique ID:</label>
-                <input type="text" class="form-control" placeholder="Story's unique ID" v-model="unique_id" id="skillId">
+                <label for="unique_id" class="form-label">Story's unique ID:</label>
+                <input type="text" class="form-control" placeholder="Story's unique ID" v-model="unique_id" id="unique_id">
             </div>
             <div>
                 <label for="misty_files" class="form-label">Misty story files:</label>
@@ -71,41 +71,41 @@
                 minAge: 0,
                 maxAge: 0,
                 thumbnail_path: "",
-                skill_path: "",
-                
+                skill_path: "", 
+                test: [],
             },
             methods: {
                
-                updateSkill: function () {
-                    console.log("updated skill");
-                },
-
                 editStory: function () {
                     
                     let formData = new FormData();
                     formData.append("id", this.story.id);
                     formData.append("title", this.title);
                     formData.append("description", this.desc);
-                    formData.append("min_interactivity", this.inter-1);
-                    formData.append("max_interactivity", this.inter+1);
+                    formData.append("min_interactivity", Number(this.inter) - 1);
+                    formData.append("max_interactivity", Number(this.inter) + 1);
                     formData.append("min_suitable_age", this.minAge);
                     formData.append("max_suitable_age", this.maxAge);
                     formData.append("tags", this.tags);
-                    formData.append('unique_id', this.skillId);
+                    formData.append('unique_id', this.unique_id);
 
                     //if no new files 
                     if (document.getElementById('skill').files.length === 0) {
-                        formData.append("skill", -1);
+                        console.log("no new skill");
                     } else {
                         formData.append("skill", document.getElementById('skill').files[0]);
                     }
 
                     if (document.getElementById('thumb').files.length === 0) {
-                        formData.append("thumb", -1);
+                        console.log("no new thumb");
+
                     } else {
                         formData.append("thumb", document.getElementById('thumb').files[0]);
                     }
-
+                    
+                    for (var value of formData.values()) {
+                        console.log(value);
+                    }
 
                     axios.post("/api/stories/editStory", 
                     formData, 
@@ -120,14 +120,7 @@
                         console.log(response);
                         console.log(response.response);
                     })
-
-                    
-                    
-                    
-                },  
-
-               
-            
+                },    
             },
             mounted() {
                 axios.get("/api/stories/" + {{ $story->id }})
@@ -140,14 +133,12 @@
                     this.desc = story.description;
                     this.inter = story.min_interactivity;
                     this.inter = story.min_interactivity;
-                    this.tags = story.tags;
+
                     this.unique_id = story.misty_skill_id;
                     this.minAge = story.min_suitable_age;
                     this.maxAge = story.max_suitable_age;
                     this.thumbnail_path = this.story.thumbnail_path;
                     this.skill_path = this.story.skill_path;
-
-                    
                 })
                 .catch(response => {
                     console.log(response.data);
@@ -159,9 +150,23 @@
                 })
                 .catch(response => {
                     console.log(response.data);
+                }), 
+
+                axios.get("/api/stories/" + {{ $story->id }} + "/tags")
+                .then(response=>{
+                    tags = Object.values(response.data);
+                    console.log(response);
+                    validTags = [];
+                    for (let i=0; i<tags.length; i++) {
+                        validTags.push(tags[i].tag);
+                    }
+
+                    this.tags = validTags;
                 })
-            
-            }   
+                .catch(response => {
+                    console.log(response.response);
+                })
+            }
         });            
     </script>
 @endsection
