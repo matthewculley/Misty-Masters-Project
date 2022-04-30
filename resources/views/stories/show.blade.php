@@ -140,6 +140,8 @@
                    this.newReview = "";
                 })
                 .catch(response => {
+                    error = Object.values(response.response)[0];
+                    alert("Error " + error.code + ": " + error.message);
                     console.log(response);
                     console.log(response.response);
                 })

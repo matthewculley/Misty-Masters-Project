@@ -17,7 +17,7 @@ class CreateStoriesTable extends Migration
             $table->id()->primary_key();
             $table->timestamps();
             $table->string("title");
-            $table->string("description")->nullable();
+            $table->string("description");
             $table->integer("min_suitable_age");
             $table->integer("max_suitable_age");
             $table->integer("min_interactivity");

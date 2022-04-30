@@ -18,8 +18,10 @@
                 <textarea v-model="desc" class="form-control" placeholder="Description" id="desc"></textarea>
             </div>
             <div>
-                <label for="inter" class="form-label">Interactivity level: @{{ inter }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="0" max="5" id="inter" v-model="inter">
+                <label for="minInter" class="form-label">Minimum interactivity level: @{{ minInter }}</label>
+                <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="minInter" v-model="minInter">
+                <label for="inter" class="form-label">Maximum interactivity level: @{{ maxInter }}</label>
+                <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="maxInter" v-model="maxInter">
             </div>
             <div>
                 <label for="minAge" class="form-label">Minimum suitable age: @{{ minAge }}</label>
@@ -50,6 +52,17 @@
                 <label for="misty_files" class="form-label">Misty story files:</label>
                 <input type="file" class="form-control" placeholder="Misty story zip" id="skill">
             </div>
+            
+            <div v-if="errors">
+                <br>
+                <div v-for="(v, k) in errors" :key="k">
+                    <p v-for="error in v" :key="error" class="alert alert-danger">
+                        @{{ error }}
+                    </p>
+                </div>
+            </div>
+
+
             <div>
                 <br>
                 <button id="add" class="btn btn-primary form-control" @click="editStory">Edit Story</button>
@@ -64,15 +77,17 @@
                 story: {},
                 title: "",
                 desc: "",
-                inter: 0,
+                minInter: 01,
+                maxInter: 01,
                 tags: [],
                 allTags: [],
                 unique_id: "",
-                minAge: 0,
-                maxAge: 0,
+                minAge: 1,
+                maxAge: 1,
                 thumbnail_path: "",
                 skill_path: "", 
                 test: [],
+                errors: "",
             },
             methods: {
                
@@ -82,29 +97,20 @@
                     formData.append("id", this.story.id);
                     formData.append("title", this.title);
                     formData.append("description", this.desc);
-                    formData.append("min_interactivity", Number(this.inter) - 1);
-                    formData.append("max_interactivity", Number(this.inter) + 1);
+                    formData.append("min_interactivity", Number(this.minInter));
+                    formData.append("max_interactivity", Number(this.maxInter));
                     formData.append("min_suitable_age", this.minAge);
                     formData.append("max_suitable_age", this.maxAge);
                     formData.append("tags", this.tags);
-                    formData.append('unique_id', this.unique_id);
+                    formData.append('misty_skill_id', this.unique_id);
 
                     //if no new files 
-                    if (document.getElementById('skill').files.length === 0) {
-                        console.log("no new skill");
-                    } else {
+                    if (!document.getElementById('skill').files.length === 0) {
                         formData.append("skill", document.getElementById('skill').files[0]);
                     }
 
-                    if (document.getElementById('thumb').files.length === 0) {
-                        console.log("no new thumb");
-
-                    } else {
+                    if (!document.getElementById('thumb').files.length === 0) {
                         formData.append("thumb", document.getElementById('thumb').files[0]);
-                    }
-                    
-                    for (var value of formData.values()) {
-                        console.log(value);
                     }
 
                     axios.post("/api/stories/editStory", 
@@ -115,10 +121,14 @@
                     .then(response => {
                         console.log("edited story");
                         console.log(response);
+                        window.open("/stories/" + this.story.id);   
                     })
                     .catch(response => {
                         console.log(response);
                         console.log(response.response);
+
+                        this.errors = Object.values(response)[2].data.errors;
+                    
                     })
                 },    
             },
@@ -131,8 +141,8 @@
 
                     this.title = story.title;
                     this.desc = story.description;
-                    this.inter = story.min_interactivity;
-                    this.inter = story.min_interactivity;
+                    this.minInter = story.min_interactivity;
+                    this.maxIinter = story.min_interactivity;
 
                     this.unique_id = story.misty_skill_id;
                     this.minAge = story.min_suitable_age;

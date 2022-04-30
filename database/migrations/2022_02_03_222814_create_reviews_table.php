@@ -18,7 +18,7 @@ class CreateReviewsTable extends Migration
             $table->unsignedBigInteger('story_id')->nullable();
             $table->timestamps();
             $table->integer('rating');
-            $table->string('review');
+            $table->string('review')->nullable();
             
             $table->foreign('story_id')->references('id')
                 ->on('stories')->onDelete('cascade')->onUpdate('cascade');

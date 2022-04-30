@@ -3,66 +3,119 @@
     @section('title', 'Stories')
 
     @section('content')
-    <div id="root" class="container mx-auto">
-        <div class="row">
+    <div id="root" class="container-fluid mx-auto border" style="width:90%;">
+    
+        <h1>Stories <a href="/add" class="btn btn-outline-primary"><h5>Add a new story</h5></a></h1>
+        <div class="container">
+
             <div class="row">
-                <h1>Stories <a href="/add" class="btn btn-outline-primary"><h5>Add a new story</h5></a></h1>
+                <div class="d-flex justify-content-left flex-wrap">
+                    <div v-for="s in tags" :key="s.tag" class="form-check m-2">
+                        <input class="form-check-input" :id="s.tag" type="checkbox" :value="s.tag" v-model="checkedTags"></input>
+                        <label class="form-check-label" :for="s.tag"> @{{ s.tag }} </label>
+                    </div>
+                </div>
             </div>
-            <ul id="search_sort" class="list-group list-group-horizontal">
-                <!-- <div class="row"> -->
-                <li id="search" class="list-group-item">
-                    <!-- <h5>Search by title</h5> -->
-                    <input type="text" placeholder="search" v-model="searchTerm"></input>
-                </li>
-                <li id="sort" class="list-group-item">
-                    <!-- <h5>Sort</h5> -->
-                    <!-- <label for="cars">Sort by: </label> -->
-                    <select name="sortType" id="sortType" v-model="sortType">
-                        <option value="" disabled selected>Sort by</option>
+
+            <div class="row d-flex justify-content-left flex-wrap p-0">
+
+                <div class="col-sm-8 form-floating">
+                    <input id="search" class="form-control" type="text" placeholder="Search by title" v-model="searchTerm"></input>
+                    <label class="p-3"for="search"> Search</label>
+                </div>
+
+                <div class="col-sm-2 form-floating">
+                    <select class="form-select" name="sortType" id="sortType" v-model="sortType">
                         <option value="alpha">Alphabetically</option>
                         <option value="age">Age</option>
                         <option value="lastPlayed">Last Played</option>
                         <option selected="selected" value="mostPlayed">Most Played</option>
                     </select>
-                    <select name="" id="sortType" v-model="sortOrder">
-                        <option value="" disabled selected>Order by</option>
+                    <label class="p-3" for="sortType"> Sort by</label>
+                </div>
+
+                <div class="col-sm-2 form-floating">
+                    <select class="form-select" name="orderBy" id="sortType" v-model="sortOrder">
                         <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
                     </select>
-                    <input type="submit" value="Sort" @click="sort"></input>
-                </li>
-                <li id="reset" class="list-group-item"> 
-                    <input type="submit" value="Reset" @click="reset"></input>
-                </li>
-                <li id="searchFilter" class="list-group-item"> 
-                    <input type="submit" value="Search and filter" @click="searchFilter"></input>
-                </li>        
-            </ul>    
+                    <label class="p-3"for="orderBy"> Order by</label>
+                </div>   
+
+            </div>
+
+            <div class="row d-flex">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary m-2" @click="searchFilter" style="width:50%;">Search and filter</button>
+                </div>
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary m-2" @click="reset" style="width:50%;">Reset</button>
+                </div>            
+            </div>
+            
         </div>
 
-        <div id="keywords" class="row">
-            <ul class="list-group list-group-horizontal" >
-                <li v-for="s in tags" class="list-group-item">
-                    <input :id="s.tag" type="checkbox" :value="s.tag" v-model="checkedTags"></input>
-                    <label :for="s.tag"> @{{ s.tag }} </label>
-                </li>
-            </ul>
-        </div>       
-        <div class="row">
-            <div id="results" class="row container">
-                <div v-for="s in displayStories" :key="s.title" class="card d-flex flex-wrap m-1" style="width:300px; height:400px">
-                    <div class="card-header bg-light"> 
-                        <h3> @{{ s.title }} </h3>
-                    </div>
-                    <div class="container card-body"> 
-                    <img v-bind:src="s.thumbnail_path" class="img-thumbnail" style="max-width:250px; max-height:200px;">
-                        <p> @{{ s.description }} </p>
-                        <a :href="/stories/ + s.id"> Learn more. </a>
-                    </div>
-                </div> 
-            </div>    
+        <!-- <ul id="search_sort" class="list-group list-group-horizontal">
+            <li id="search" class="list-group-item">
+                <input type="text" placeholder="search" v-model="searchTerm"></input>
+            </li>
+            <li id="sort" class="list-group-item">
+                <select name="sortType" id="sortType" v-model="sortType">
+                    <option value="" disabled selected>Sort by</option>
+                    <option value="alpha">Alphabetically</option>
+                    <option value="age">Age</option>
+                    <option value="lastPlayed">Last Played</option>
+                    <option selected="selected" value="mostPlayed">Most Played</option>
+                </select>
+                <select name="" id="sortType" v-model="sortOrder">
+                    <option value="" disabled selected>Order by</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+                <input type="submit" value="Sort" @click="sort"></input>
+            </li>
+            <li id="reset" class="list-group-item"> 
+                <input type="submit" value="Reset" @click="reset"></input>
+            </li>
+            <li id="searchFilter" class="list-group-item"> 
+                <input type="submit" value="Search and filter" @click="searchFilter"></input>
+            </li>        
+        </ul>    -->
+
+
+        
+
+            
+
+        <!-- <ul class="list-group list-group-horizontal" >
+            <li v-for="s in tags" class="list-group-item">
+                <input :id="s.tag" type="checkbox" :value="s.tag" v-model="checkedTags"></input>
+                <label :for="s.tag"> @{{ s.tag }} </label>
+            </li>
+        </ul> -->
+
+        <!-- <div v-for="s in displayStories" :key="s.title" class="card d-flex flex-wrap mx-auto" style="width:300px; height:400px">
+            <div class="card-header bg-light"> 
+                <h3> @{{ s.title }} </h3>
+            </div>
+            <div class="container card-body"> 
+            <img v-bind:src="s.thumbnail_path" class="img-thumbnail mx-auto d-block" style="max-width:250px; max-height:200px;">
+                <p> @{{ s.description }} </p>
+                <a :href="/stories/ + s.id"> Learn more. </a>
+            </div>
+        </div>  -->
+
+        <div class="d-flex justify-content-between flex-wrap">
+            <div v-for="s in displayStories" :key="s.title" class="card m-1" style="width:250px">
+                <img class="card-img-top" v-bind:src="s.thumbnail_path" style="width:100%">
+                <div class="card-body">
+                <h4 class="card-title">@{{ s.title }}</h4>
+                <p class="card-text">@{{ s.description }}</p>
+                <a :href="/stories/ + s.id" class="btn btn-primary">Select</a>
+                </div>
+            </div>
         </div>
-    </div>
+</div>
     <script>
         var app = new Vue({
             el: "#root",
@@ -73,8 +126,8 @@
                 searchTerm: "",
                 checkedTags: [],
                 returnData: [],
-                sortType: "",
-                sortOrder: "",
+                sortType: "alpha",
+                sortOrder: "asc",
                 history: [],
             },
             methods: {
@@ -217,7 +270,9 @@
                     if (this.checkedTags == []) {
                         return;
                     }
+
                     var tags = String(this.checkedTags).replace(/,/g, "+").replace(/ /g, "_");
+
                     if (!tags == "") {
                         //get all stories with those tags
                         axios.get("/api/stories/tags/" + tags)
@@ -262,6 +317,8 @@
 
                 reset: function() {
                     this.displayStories = this.stories;
+                    this.sortType = "alpha";
+                    this.sortOrder = "asc"
                     this.checkedTags = [];
                     this.searchTerm = "";
                 }
@@ -271,6 +328,7 @@
                 axios.get("/api/stories")
                 .then(response=>{
                     this.stories = Object.values(response.data);
+                    this.reset();
                     console.log(response);
                 })
                 .catch(response => {

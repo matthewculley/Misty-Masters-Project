@@ -107,8 +107,12 @@ class StoryController extends Controller
         ]);
 
         if ($validated['rating'] == 1 && strlen($validated['review'] == 0)) {
-            
-            return response('A review must be left when the rating is 1', 500)->header('Content-Type', 'text/plain');
+            // return response()->
+            return response([
+                'code' => '500',
+                'message' => 'A review must be left when the rating is 1',
+            ], 
+            500)->header('Content-Type', 'text/plain');
         }
 
         $review = new Review();
@@ -220,24 +224,36 @@ class StoryController extends Controller
 
     public function apiEdit(Request $request)
     {   
-        //find old story 
-        $story = Story::findOrFail($request['id']);  
-        
-        //add new story
-        $story->title = $request['title'];
-        $story->description = $request['description'];
-        $story->min_interactivity = $request['min_interactivity'];
-        $story->max_interactivity = $request['max_interactivity'];
-        $story->min_suitable_age = $request['min_suitable_age'];
-        $story->max_suitable_age = $request['max_suitable_age'];
-        $story->misty_skill_id = $request['unique_id'];
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'min_suitable_age' => 'required|integer|min:1|max:15',
+            'max_suitable_age' => 'required|integer|min:1|max:15',
+            'min_interactivity' => 'required|integer|min:1|max:5',
+            'max_interactivity' => 'required|integer|min:1|max:5',
+            'misty_skill_id' => 'required|string',
+            'thumb' => 'nullable|mimes:jpg,bmp,png',
+            'skill' => 'nullable|mimes:zip',
 
-        if ($request->has('thumb')) {
-            $story->thumbnail_path = "img/".$request->file('thumb')->store('');
+        ]);
+
+        //find old story 
+        $story = Story::findOrFail($request['id']);
+
+        $story->title = $validated['title'];
+        $story->description = $validated['description'];
+        $story->min_interactivity = $validated['min_interactivity'];
+        $story->max_interactivity = $validated['max_interactivity'];
+        $story->min_suitable_age = $validated['min_suitable_age'];
+        $story->max_suitable_age = $validated['max_suitable_age'];
+        $story->misty_skill_id = $validated['misty_skill_id'];
+
+        if (array_key_exists('thumb', $validated)) {
+            $story->thumbnail_path = "img/".$validated->file('thumb')->store('');
         } 
 
-        if ($request->has('skill')) {
-            $story->misty_skill_path = "img/".$request->file('skill')->store('');
+        if (array_key_exists('skill', $validated)) {
+            $story->misty_skill_path = "img/".$validated->file('skill')->store('');
         } 
         
         $story->tags()->detach();
@@ -253,9 +269,6 @@ class StoryController extends Controller
 
         $story->save();
 
-        return response()->json([
-            'thumnailpath' => $story->thumbnail_path,
-        ]);
     }
 
     /**
