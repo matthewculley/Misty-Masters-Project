@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
     {
         $stories = Story::factory()->count(20)->create();
         $reviews = Review::factory()->count(sizeof($stories)*20)->create();
-        $tagsToSeed = ["fun", "exploring", "Suitable for boys", "Suitable for girls", "jungle", "fantasy", "educational", "linear", "fictional", "non-fiction"];
+        $tagsToSeed = ["Educational", "Exploration", "Non-fiction", "Fiction", 
+            "Suitable for boys", "Suitable for girls", "Adventurous", "Jungle", 
+            "Animals", "Interactive", "History", "Fantasy", "Science Fiction", "Fairy Tale"];
 
         foreach($reviews as $review) {
             //choose a random story
@@ -51,11 +53,6 @@ class DatabaseSeeder extends Seeder
             $story = Story::inRandomOrder()->first();
             $h->story()->associate($story->id);
             $h->save();
-        }
-
-        // $tag = Tag::all()->first();
-        // $tag->stories()->attach(1);
-        // $tag->save();
-        
+        }        
     }
 }

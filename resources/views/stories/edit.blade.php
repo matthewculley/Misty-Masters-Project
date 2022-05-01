@@ -5,68 +5,69 @@
 @section('content')
 
 <div id="root" class="container mx-auto">
-    <div class="row container">
-    <h1> Edit story </h1>
-    <div style="width:50%;" class="mx-auto">
-            <h3>Story Details</h3>
-            <div>
-                <label for="title" class="form-label">Title:</label>
-                <input v-model="title" type="text" class="form-control" placeholder="Title" id="title">
+    <div style="width:90%;" class="mx-auto">
+        <div class="row">
+            <h1>Edit story</h1>
+        </div>
+        <h3>Story Details</h3>
+        <div class="form-floating">
+            <input id="title" class="form-control" type="text" placeholder="Title" v-model="title"></input>
+            <label class="p-3"for="title">Title</label>
+        </div>
+        <br>
+        <div class="form-floating">
+            <textarea class="form-control" type="text" id="desc" v-model="desc" placeholder="Description" style="height:100px;"></textarea>
+            <label for="desc">Description</label>
+        </div> 
+        <div>
+            <label for="minInter" class="form-label">Minimum interactivity level: @{{ minInter }}</label>
+            <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="minInter" v-model="minInter">
+            <label for="inter" class="form-label">Maximum interactivity level: @{{ maxInter }}</label>
+            <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="maxInter" v-model="maxInter">
+        </div>
+        <div>
+            <label for="minAge" class="form-label">Minimum suitable age: @{{ minAge }}</label>
+            <input type="range" style="width:100%;" class="form-range" min="1" max="15" id="minAge" v-model="minAge">
+            <label for="maxAge" class="form-label">Maximum suitable age: @{{ maxAge }}</label>
+            <input type="range" style="width:100%;" class="form-range" min="1" max="15" id="maxAge" v-model="maxAge">
+        </div>
+        <div>
+            <label for="thumb" class="form-label">Thumbnail Image:</label>
+            <input type="file" class="form-control" placeholder="Thumbnail image" id="thumb">
+        </div>
+        <div>
+            <label for="tagList" class="form-label">Story tags:</label>
+            <ul id="tagList" class="list-group list-group-horizontal" >
+                <li v-for="s in allTags" class="list-group-item">
+                    <input :id="s.tag" type="checkbox" :value="s.tag" v-model="tags"></input>
+                    <label :for="s.tag"> @{{ s.tag }} </label>
+                </li>
+            </ul>
+        </div>
+        <br>
+        <h3>Misty Details</h3>
+        <div class="form-floating">
+                <input id="unique_id" class="form-control" type="text" placeholder="Story's unique ID" v-model="unique_id"></input>
+                <label class="p-3"for="unique_id">Story's unique ID</label>
             </div>
-            <div>
-                <label for="desc" class="form-label">Story description:</label>
-                <textarea v-model="desc" class="form-control" placeholder="Description" id="desc"></textarea>
-            </div>
-            <div>
-                <label for="minInter" class="form-label">Minimum interactivity level: @{{ minInter }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="minInter" v-model="minInter">
-                <label for="inter" class="form-label">Maximum interactivity level: @{{ maxInter }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="maxInter" v-model="maxInter">
-            </div>
-            <div>
-                <label for="minAge" class="form-label">Minimum suitable age: @{{ minAge }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="0" max="15" id="minAge" v-model="minAge">
-                <label for="maxAge" class="form-label">Maximum suitable age: @{{ maxAge }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="0" max="15" id="maxAge" v-model="maxAge">
-            </div>
-            <div>
-                <label for="thumb" class="form-label">Thumbnail Image:</label>
-                <input type="file" class="form-control" placeholder="Thumbnail image" id="thumb">
-            </div>
-            <div>
-                <label for="tagList" class="form-label">Story tags:</label>
-                <ul id="tagList" class="list-group list-group-horizontal" >
-                    <li v-for="s in allTags" class="list-group-item">
-                        <input :id="s.tag" type="checkbox" :value="s.tag" v-model="tags"></input>
-                        <label :for="s.tag"> @{{ s.tag }} </label>
-                    </li>
-                </ul>
-            </div>
+        <div>
+            <label for="misty_files" class="form-label">Misty story files:</label>
+            <input type="file" class="form-control" placeholder="Misty story zip" id="skill">
+        </div>
+        
+        <div v-if="errors">
             <br>
-            <h3>Misty Details</h3>
-            <div>
-                <label for="unique_id" class="form-label">Story's unique ID:</label>
-                <input type="text" class="form-control" placeholder="Story's unique ID" v-model="unique_id" id="unique_id">
+            <div v-for="(v, k) in errors" :key="k">
+                <p v-for="error in v" :key="error" class="alert alert-danger">
+                    @{{ error }}
+                </p>
             </div>
-            <div>
-                <label for="misty_files" class="form-label">Misty story files:</label>
-                <input type="file" class="form-control" placeholder="Misty story zip" id="skill">
-            </div>
-            
-            <div v-if="errors">
-                <br>
-                <div v-for="(v, k) in errors" :key="k">
-                    <p v-for="error in v" :key="error" class="alert alert-danger">
-                        @{{ error }}
-                    </p>
-                </div>
-            </div>
+        </div>
 
 
-            <div>
-                <br>
-                <button id="add" class="btn btn-primary form-control" @click="editStory">Edit Story</button>
-            </div>
+        <div class="text-center">
+            <br>
+            <button id="add" class="btn btn-primary form-control" @click="editStory" style="width:50%;">Edit Story</button>
         </div>
     </div>
 </div>

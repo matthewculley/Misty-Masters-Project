@@ -4,62 +4,64 @@
 
 @section('content')
 
-<div id="root" class="container mx-auto">
-    <div class="row container">
-    <h1>Add a new story to misty <button type="button" class="btn btn-outline-primary" @click="toggleHelp">@{{ toggleHelpText }}</button></h1>
-        <div id="help" class="row" v-if="helpVisible">
-            <h4> How to add a story to Misty</h4>
-            <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean luctus metus nec tortor porta, nec sollicitudin tortor finibus. Curabitur sit amet nibh arcu. Morbi semper sollicitudin nibh, bibendum finibus nulla pharetra id. Etiam pharetra, elit eget sollicitudin aliquet, felis risus faucibus purus, eget varius eros ligula sit amet massa. Fusce iaculis turpis ac magna dictum, ultricies commodo lorem dictum. Sed scelerisque, eros ac rutrum iaculis, risus tortor efficitur magna, eget ultricies ante felis ac ipsum. Phasellus pellentesque, massa quis semper laoreet, nulla neque congue ante, sit amet posuere ipsum tellus quis odio. Donec ut lacus sapien. Ut facilisis vitae ligula ut varius. Pellentesque varius molestie tempor. Suspendisse turpis mi, commodo vel ullamcorper et, semper eget turpis. Morbi viverra tortor quis ante tincidunt blandit eget ut felis. </p>
-        </div>
-        <div style="width:50%;" class="mx-auto">
+<div id="root" class="container-fluid mx-auto">
+        
+        <div style="width:90%;" class="mx-auto">
+            <div class="row">
+                <h1>Add a new story to misty</h1>
+            </div>
             <h3>Story Details</h3>
+            <div class="form-floating">
+                <input id="title" class="form-control" type="text" placeholder="Title" v-model="title"></input>
+                <label class="p-3"for="title">Title</label>
+            </div>
+            <br>
+            <div class="form-floating">
+                <textarea class="form-control" type="text" id="desc" v-model="desc" placeholder="Description" style="height:100px;"></textarea>
+                <label for="desc">Description</label>
+            </div> 
             <div>
-                <label for="title" class="form-label">Title:</label>
-                <input v-model="title" type="text" class="form-control" placeholder="Title" id="title">
+                <label for="minInter" class="form-label">Minimum interactivity level: @{{ minInter }}</label>
+                <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="minInter" v-model="minInter">
             </div>
             <div>
-                <label for="desc" class="form-label">Story description:</label>
-                <textarea v-model="desc" class="form-control" placeholder="Description" id="desc"></textarea>
-            </div>
-            <div>
-                <label for="minInter" class="form-label">Interactivity level: @{{ minInter }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="0" max="5" id="minInter" v-model="minInter">
+                <label for="maxInter" class="form-label">Max interactivity level: @{{ maxInter }}</label>
+                <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="maxInter" v-model="maxInter">
             </div>
             <div>
                 <label for="minAge" class="form-label">Minimum suitable age: @{{ minAge }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="0" max="15" id="minAge" v-model="minAge">
+                <input type="range" style="width:100%;" class="form-range" min="1" max="15" id="minAge" v-model="minAge">
                 <label for="maxAge" class="form-label">Maximum suitable age: @{{ maxAge }}</label>
-                <input type="range" style="width:100%;" class="form-range" min="0" max="15" id="maxAge" v-model="maxAge">
+                <input type="range" style="width:100%;" class="form-range" min="1" max="15" id="maxAge" v-model="maxAge">
             </div>
             <div>
                 <label for="thumb" class="form-label">Thumbnail Image:</label>
                 <input type="file" class="form-control" placeholder="Thumbnail image" id="thumb">
             </div>
-            <div>
-                <label for="tagList" class="form-label">Story tags:</label>
-                <ul id="tagList" class="list-group list-group-horizontal" >
-                    <li v-for="s in allTags" class="list-group-item">
-                        <input :id="s.tag" type="checkbox" :value="s.tag" v-model="tags"></input>
-                        <label :for="s.tag"> @{{ s.tag }} </label>
-                    </li>
-                </ul>
+            <div class="row">
+            <label for="tagList" class="form-label">Story tags:</label>
+                <div class="d-flex justify-content-left flex-wrap">
+                    <div v-for="s in allTags" :key="s.tag" class="form-check m-2">
+                        <input class="form-check-input" :id="s.tag" type="checkbox" :value="s.tag" v-model="tags"></input>
+                        <label class="form-check-label" :for="s.tag"> @{{ s.tag }} </label>
+                    </div>
+                </div>
             </div>
             <br>
-            <h3>Misty Details</h3>
-            <div>
-                <label for="title" class="form-label">Story's unique ID:</label>
-                <input type="text" class="form-control" placeholder="Story's unique ID" v-model="skillId" id="skillId">
+            <h3>Misty Skill Details</h3>
+            <div class="form-floating">
+                <input id="skillId" class="form-control" type="text" placeholder="Story's unique ID" v-model="skillId"></input>
+                <label class="p-3"for="title">Story's unique ID</label>
             </div>
             <div>
                 <label for="misty_files" class="form-label">Misty story files:</label>
                 <input type="file" class="form-control" placeholder="Misty story zip" id="skill">
             </div>
-            <div>
+            <div class="text-center">
                 <br>
-                <button id="add" class="btn btn-primary form-control" @click="createStory">Add Story</button>
+                <button id="add" class="btn btn-primary form-control" style="width:50%" @click="createStory">Add Story</button>
             </div>
         </div>
-    </div>
 </div>
 <script>
         var app = new Vue({
@@ -69,13 +71,13 @@
                 toggleHelpText: "Show help",
                 title: "",
                 desc: "",
-                minInter: 0,
-                maxInter: 0,
+                minInter: 1,
+                maxInter: 1,
                 tags: [],
                 allTags: [],
                 skillId: "",
-                minAge: 0,
-                maxAge: 0,
+                minAge: 1,
+                maxAge: 1,
                 
             },
             methods: {
@@ -108,6 +110,7 @@
                     .then(response => {
                         console.log("created story");
                         console.log(response.response);
+                        window.location.href = '/stories';
                     })
                     .catch(response => {
                         console.log(response.response);

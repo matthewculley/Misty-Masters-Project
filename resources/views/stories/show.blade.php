@@ -83,7 +83,20 @@
         </div>
     </div>
 </div>
-        
+      
+<!-- axios.post('http://' + this.mistyIP + '/api/skills', formdata, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                .then(function (response) {
+                    console.log("Uploaded skill");
+                    console.log(response);
+                    skillId = response.data['result'];
+                })
+                .catch(function (error) {
+                    console.log(error);
+                }); -->
 </div>
 <script>
     var app = new Vue({
@@ -155,57 +168,59 @@
             playStory: function() {
                 
                 console.log("Playing story: " + "{{ $story->title }}" + ", interactivity level: " + this.interactivity);
-                console.log(this.story.misty_skill_path);
-                //get the skill file
-                skill = null;
+                console.log("id", this.story.id);
 
-                //upload skill to misty
-                skillId = "";
-
-                var formdata = new FormData();
-                formdata.append("File", skill, "[PROXY]");
-                
-
-                axios.post('http://' + this.mistyIP + '/api/skills', formdata, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                .then(function (response) {
-                    console.log("Uploaded skill");
-                    console.log(response);
-                    skillId = response.data['result'];
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
-                //play skill on misty
-                axios.post('http://' + ip + '/api/skills/start', {
-                    skill: this.story.misty_skill_id, 
-                    method: 'null'
-                })
-                .then(function (response) {
-                    console.log("Showing emotions")
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });      
-
-                          
-                //update play counter
+                //update play counter and add history
                 axios.post("/api/stories/" + "{{ $story->id }}" + "/play", 
                 {
-                    story_id: {{ $story->id }},
+                    story_id: this.story.id,
                     last_played: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 })
                 .then(response => {
                     this.updateHistory();
+                    console.log(response);
                 })
                 .catch(response => {
                     console.log(response);
+                });
+
+                // //get the skill file
+                // skill = null;
+
+                // //upload skill to misty
+                // skillId = "";
+
+                // var formdata = new FormData();
+                // formdata.append("File", skill, "[PROXY]");
+                
+                // //play skill on misty
+                // axios.post('http://' + ip + '/api/skills/start', {
+                //     skill: this.story.misty_skill_id, 
+                //     method: 'null'
+                // })
+                // .then(function (response) {
+                //     console.log(response);
+                // })
+                // .catch(function (error) {
+                //     console.log(error);
+                // });      
+
+                //update the story object
+                axios.get("/api/stories/" + {{ $story->id }})
+                .then(response=>{
+                    this.story = response.data;
+                    this.thumbnail_path = "/" + this.story.thumbnail_path;
+
+                    allReviews = 0;
+                        for(let i=0; i<this.reviews.length; i++) {
+                            allReviews += this.reviews[i].rating;
+                        }
+                        this.averageRating = (allReviews / this.reviews.length).toPrecision(2);
                 })
+                .catch(response => {
+                    console.log(response.data);
+                });
+
             },
 
             updateReviews: function () {
