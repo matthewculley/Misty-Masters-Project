@@ -82,7 +82,7 @@ class StoryController extends Controller
         $story->times_played = 0;
         $story->thumbnail_path = "img/".$request->file('thumb')->store('');
         $story->misty_skill_id = $request['unique_id'];
-        $story->misty_skill_path = "skills/".$request->file('skill')->store('');
+        $story->misty_skill_path = "img/".$request->file('skill')->store('');
       
         
         $story->save();

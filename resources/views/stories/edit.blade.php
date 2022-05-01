@@ -127,7 +127,7 @@
                         console.log(response);
                         console.log(response.response);
 
-                        this.errors = Object.values(response)[2].data.errors;
+                        this.errors = Object.values(response)[2].data;
                     
                     })
                 },    

@@ -55,56 +55,6 @@
             
         </div>
 
-        <!-- <ul id="search_sort" class="list-group list-group-horizontal">
-            <li id="search" class="list-group-item">
-                <input type="text" placeholder="search" v-model="searchTerm"></input>
-            </li>
-            <li id="sort" class="list-group-item">
-                <select name="sortType" id="sortType" v-model="sortType">
-                    <option value="" disabled selected>Sort by</option>
-                    <option value="alpha">Alphabetically</option>
-                    <option value="age">Age</option>
-                    <option value="lastPlayed">Last Played</option>
-                    <option selected="selected" value="mostPlayed">Most Played</option>
-                </select>
-                <select name="" id="sortType" v-model="sortOrder">
-                    <option value="" disabled selected>Order by</option>
-                    <option value="asc">Ascending</option>
-                    <option value="desc">Descending</option>
-                </select>
-                <input type="submit" value="Sort" @click="sort"></input>
-            </li>
-            <li id="reset" class="list-group-item"> 
-                <input type="submit" value="Reset" @click="reset"></input>
-            </li>
-            <li id="searchFilter" class="list-group-item"> 
-                <input type="submit" value="Search and filter" @click="searchFilter"></input>
-            </li>        
-        </ul>    -->
-
-
-        
-
-            
-
-        <!-- <ul class="list-group list-group-horizontal" >
-            <li v-for="s in tags" class="list-group-item">
-                <input :id="s.tag" type="checkbox" :value="s.tag" v-model="checkedTags"></input>
-                <label :for="s.tag"> @{{ s.tag }} </label>
-            </li>
-        </ul> -->
-
-        <!-- <div v-for="s in displayStories" :key="s.title" class="card d-flex flex-wrap mx-auto" style="width:300px; height:400px">
-            <div class="card-header bg-light"> 
-                <h3> @{{ s.title }} </h3>
-            </div>
-            <div class="container card-body"> 
-            <img v-bind:src="s.thumbnail_path" class="img-thumbnail mx-auto d-block" style="max-width:250px; max-height:200px;">
-                <p> @{{ s.description }} </p>
-                <a :href="/stories/ + s.id"> Learn more. </a>
-            </div>
-        </div>  -->
-
         <div class="d-flex justify-content-between flex-wrap">
             <div v-for="s in displayStories" :key="s.title" class="card m-1" style="width:250px">
                 <img class="card-img-top" v-bind:src="s.thumbnail_path" style="width:100%">
@@ -313,12 +263,11 @@
 
                     this.search();
                     this.filterTags();
+                    this.sort()
                 },
 
                 reset: function() {
                     this.displayStories = this.stories;
-                    this.sortType = "alpha";
-                    this.sortOrder = "asc"
                     this.checkedTags = [];
                     this.searchTerm = "";
                 }

@@ -3,92 +3,87 @@
 @section('title', 'Stories')
 
 @section('content')
-    <div id="root" >
-        <div class="mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
-            <div class="card-header bg-light"> 
-                <h3> @{{ story.title }} </h3>
-            </div>
-            <div class="container card-body"> 
-                <img v-bind:src="thumbnail_path" class="img-thumbnail" style="width:100%;">
-                <br><br>
-                <p><strong>Description:</strong> @{{ story.description }}</p>
-                <p><strong>Tags:</strong> @{{ tags }}</p>
-                <p><strong>Interactivity range:</strong> @{{ story.min_interactivity  }}-@{{ story.max_interactivity }}</p>
-                <p><strong>Age range:</strong> @{{ story.min_suitable_age  }} - @{{ story.max_suitable_age }} years old.</p>
-                <p><strong>Played:</strong> @{{ story.times_played }} times.</p>
-                <p><strong>Average rating:</strong> @{{ averageRating  }}</p>
-                <p><strong>Misty skill ID:</strong> @{{ story.misty_skill_id  }}</p>
+<div id="root" class="container-fluid mx-auto border" style="width:90%;">
+    <div class="row">
+        <h1 style="width:99%;" class="card-title p-3 m-3 border-bottommx-auto ">@{{ story.title }}</h1>
 
-                <button type="submit" class="btn btn-outline-primary" @click="download">Download skill</button>
-
-            </div>
-        </div> 
-        <div class="row mx-auto" style="width:50%;">
-            <div class="col mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
-                <div class="card-header bg-light"> 
-                    <h3>Story Options</h3>
+        <div class="col justify-content-center mx-auto">
+            <div class="card m-3">
+                <img class="card-img-top" v-bind:src="thumbnail_path" style="width:100%">
+                <div class="card-body">
+                    <p class="card-text"><strong>Description:</strong> @{{ story.description }}</p>
+                    <p class="card-text"><strong>Tags:</strong> @{{ tags }}</p>
+                    <p class="card-text"><strong>Interactivity range:</strong> @{{ story.min_interactivity  }}-@{{ story.max_interactivity }}</p>
+                    <p class="card-text"><strong>Age range:</strong> @{{ story.min_suitable_age  }} - @{{ story.max_suitable_age }} years old.</p>
+                    <p class="card-text"><strong>Played:</strong> @{{ story.times_played }} times.</p>
+                    <p class="card-text"><strong>Average rating:</strong> @{{ averageRating  }}</p>
+                    <p class="card-text"><strong>Misty skill ID:</strong> @{{ story.misty_skill_id  }}</p>
+                    <button type="submit" class="btn btn-primary" @click="download">Download skill</button>
+                    <button type="submit" class="btn btn-primary" value="Edit" @click="editStory">Edit Story</button>
                 </div>
-                <div class="row container card-body"> 
-                    <div class="col">
-                        <h4>Play Story</h4>
-                        <label for="ip" class="form-label">Mist's IP address:</label>
-                        <input v-model="mistyIP" type="text" class="form-control" placeholder="Misty's IP" id="ip">
-                        <label for="inter">Interactivity: @{{ interactivity }} </label>
-                        <input type="range" style="width:100%;" class="form-range" min="1" max="5" id="inter" v-model="interactivity">
-                        <br>
-                        <button type="submit" class="btn btn-outline-primary" value="Play" @click="playStory">Play Story</button>
-                    </div>       
-                    <div class="col">   
-                        <h5>Edit Story</h5>
-                        <button type="submit" class="btn btn-outline-primary" value="Edit" @click="editStory">Edit Story</button>
-                        <br>
-                        <br>
-                        <h5>Toggle Comments / Play History</h5>        
-                        <button type="submit" class="btn btn-outline-primary" value="Edit" @click="toggle">Toggle</button>
+            </div>
+        </div>
+
+        <div class="col">
+
+            <div class="row border m-3 p-2">
+
+                <h4>Play Story</h4>
+                <div class="form-floating">
+                    <input name="ip" v-model="mistyIP" type="text" class="form-control" placeholder="Misty's IP" id="ip">
+                    <label class="p-3"for="ip"> Misty's IP Address</label>
+                </div>            
+                <br>
+                <label for="inter">Interactivity: @{{ interactivity }} </label>
+                <input type="range" style="width:95%;" class="form-range mx-auto" min="1" max="5" id="inter" v-model="interactivity">
+                <div class="text-center">
+                    <button type="submit" style="width:75%;" class="btn btn-primary text-center" value="Play" @click="playStory">Play Story</button>
+                </div>
+                
+            </div>
+    
+            <div class="row border m-3 p-2">
+                <h3>Add Review</h3>
+                <label for="rating">Rating: @{{ newRating }}</label>
+                    <br>
+                <input type="range" style="width:95%" class="form-range mx-auto" min="1" max="5" id="rating" v-model="newRating">
+                <div class=""> 
+                    <div class="form-floating">
+                        <textarea class="form-control" type="text" id="input" v-model="newReview" placeholder="Review:" style="height:100px;"></textarea>
+                        <label for="input">Review</label>
+                    </div>  
+                    <br>
+                    <div class="text-center">
+                        <button type="submit" style="width:75%;" class="btn btn-primary" value="submit" @click="createReview">Submit</button>                   
                     </div>
                 </div>
-            </div> 
-            <div class="col mx-auto card d-flex flex-wrap m-1 " style="width:50%;">
-                <div class="card-header bg-light"> 
-                    <h3>Add Review</h3>
-                </div>
-                <div class="container card-body"> 
-                    <label for="input">Review: </label>
-                    <br>
-                    <textarea type="text" id="input" style="width:100%" v-model="newReview"></textarea>
-                    <br>
-                    <label for="rating">Rating: @{{ newRating }}</label>
-                    <br>
-                    <input type="range" style="width:100%" class="form-range" min="1" max="5" id="rating" v-model="newRating">
-                    <br>
-                    <button type="submit" class="btn btn-outline-primary" value="submit" @click="createReview">Submit</button>                   
-                </div>
-            </div> 
-        </div>
-        
-        <div class="container">
+            </div>
 
-</div>
-        <div v-if="commentsVisible" class="mx-auto" style="width:50%;">
-            <div v-for="review in reviews" :key="review.review" class="mx-auto card d-flex flex-wrap m-1" >
-                <div class="container card-body"> 
-                    <p><strong>Review:</strong> @{{ review.review }}</p>     
+        </div>
+
+    </div>
+    <div class="row border-top">
+        <div class="col-sm-7 m-3 p-2">
+            <h2>Reviews</h2>
+            <div v-for="review in reviews" :key="review.review" class="border mb-3" >
+                <div class="m-3"> 
                     <p><strong>Rating:</strong> @{{ review.rating }}</p>     
+                    <p>@{{ review.review }}</p>     
                 </div>
             </div> 
         </div>
 
-        <div v-if="historyVisible" class="mx-auto" style="width:50%;">
-            <p><strong>Last played:</strong> @{{ histories[0].last_played }}</p>     
-            <button type="submit" class="btn btn-outline-primary" value="Play" @click="toggelFullHistory">Show full history</button>
-
-
-            <div v-if="seeFullHistory" v-for="history in histories" :key="history.last_played" class="mx-auto card d-flex flex-wrap m-1" >
+        <div class="col-sm-4 mx-auto m-3 p-2">
+        <h2>Play History</h2>
+            <div v-for="history in histories" :key="history.last_played" class="border mb-3">
                 <div class="container card-body"> 
                     <p><strong>Played:</strong> @{{ history.last_played }}</p>     
                 </div>
             </div> 
         </div>
+    </div>
+</div>
+        
 </div>
 <script>
     var app = new Vue({
@@ -160,26 +155,20 @@
             playStory: function() {
                 
                 console.log("Playing story: " + "{{ $story->title }}" + ", interactivity level: " + this.interactivity);
-
+                console.log(this.story.misty_skill_path);
                 //get the skill file
                 skill = null;
-
-
-
-
-
 
                 //upload skill to misty
                 skillId = "";
 
                 var formdata = new FormData();
                 formdata.append("File", skill, "[PROXY]");
-                formdata.append("ImmediatelyApply", "true");
-                formdata.append("OverwriteExisting", "true");
+                
 
                 axios.post('http://' + this.mistyIP + '/api/skills', formdata, {
                     headers: {
-                    'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data'
                     }
                 })
                 .then(function (response) {
@@ -190,9 +179,6 @@
                 .catch(function (error) {
                     console.log(error);
                 });
-
-
-
 
                 //play skill on misty
                 axios.post('http://' + ip + '/api/skills/start', {
