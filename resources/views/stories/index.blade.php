@@ -76,8 +76,8 @@
                 searchTerm: "",
                 checkedTags: [],
                 returnData: [],
-                sortType: "alpha",
-                sortOrder: "asc",
+                sortType: "",
+                sortOrder: "",
                 history: [],
             },
             methods: {
@@ -168,6 +168,9 @@
                 },
 
                 sort: function() {
+                    if (this.sortOrder === "" || this.sortType === "") {
+                        return;
+                    }
                     switch (this.sortType) {
                         case "age":
                             if (this.sortOrder == "asc") {
@@ -179,7 +182,7 @@
                                     return a.max_suitable_age - b.max_suitable_age;
                                 })
                             }
-                        break;
+                            break;
                         case "alpha":
                             if (this.sortOrder == "asc") {
                                 this.displayStories.sort((a, b) => {
@@ -190,7 +193,7 @@
                                     return b.title.localeCompare(a.title);
                                 })
                             }
-                        break;
+                            break;
                         case "lastPlayed":
                             if (this.sortOrder == "asc") {
                                 this.displayStories.sort((a, b) => {
@@ -201,18 +204,18 @@
                                     return a.playOrder - b.playOrder;
                                 })
                             }
-                        break;
+                            break;
                         case "mostPlayed": 
                             if (this.sortOrder == "asc") {
                                 this.displayStories.sort((a, b) => {
-                                    return b.times_played - a.times_played;
+                                    return a.times_played - b.times_played;
                                 })
                             } else if (this.sortOrder == 'desc') {
                                 this.displayStories.sort((a, b) => {
-                                    return a.times_played - b.times_played;
+                                    return b.times_played - a.times_played;
                                 })
                             }
-                        break;
+                            break;
                     }           
                 },
                 
@@ -258,9 +261,10 @@
                     var tags = this.checkedTags;
                     var search = this.searchTerm;
                     this.reset();
+
                     this.checkedTags = tags;
                     this.searchTerm = search;
-
+                    
                     this.search();
                     this.filterTags();
                     this.sort()
@@ -270,6 +274,7 @@
                     this.displayStories = this.stories;
                     this.checkedTags = [];
                     this.searchTerm = "";
+            
                 }
             },
             mounted() {
@@ -277,8 +282,9 @@
                 axios.get("/api/stories")
                 .then(response=>{
                     this.stories = Object.values(response.data);
-                    this.reset();
                     console.log(response);
+                    this.reset();
+
                 })
                 .catch(response => {
                     console.log(response.data);
@@ -299,11 +305,12 @@
 
                     this.history.sort((a, b) => {
                         return new Date(a.lastPlayed) - new Date(b.lastPlayed);
-                        console.log(response);
                     });
 
+                    this.stories.unshift([]);
                     //for each story, find when most recently played
-                    for(let i=1; i<=this.stories.length; i++) {
+                    for (let i=1; i<this.stories.length    ; i++) {
+                        console.log(">", i);
                         //find the first index in histories that has the same id
                         var firstIndex = -1;
                         var found = false;
@@ -318,11 +325,14 @@
                             }
                         }
                         if (found) {
-                            this.stories[i-1].playOrder = firstIndex;
+                            this.stories[i].playOrder = firstIndex;
+                            console.log(i, firstIndex);
                         } else {
-                            this.stories[i-1].playOrder = Number.MAX_SAFE_INTEGER;
+                            this.stories[i].playOrder = Number.MAX_SAFE_INTEGER;
                         }
                     }
+                    
+                    this.stories.shift([]);
                     this.displayStories = this.stories;
                 })
                 .catch(response => {
