@@ -14,8 +14,8 @@ class StoryFactory extends Factory
     public function definition()
     {
 
-            $max_interactivity = rand(1, 5);
-            $min_interactivity = rand(0, $max_interactivity);
+            $max_interactivity = rand(1, 4);
+            $min_interactivity = rand(1, $max_interactivity);
             $max_suitable_age = rand(2, 15);
             $min_suitable_age = rand(1, $max_suitable_age);
             $path = $this->faker->image('public/img',400,300, null, false);
@@ -30,7 +30,6 @@ class StoryFactory extends Factory
             'min_interactivity' => $min_interactivity,
             'max_interactivity' => $max_interactivity,
             'thumbnail_path' =>  "img/" .$path,
-
         ];
     }
 }

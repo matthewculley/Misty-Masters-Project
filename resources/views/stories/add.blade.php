@@ -81,13 +81,7 @@
                 
             },
             methods: {
-                toggleHelp: function () {
-                    this.helpVisible = !this.helpVisible;
-                    this.toggleHelpText = "Show help";
-                    if (this.helpVisible) {this.toggleHelpText = "Hide help";}
-                },
-
-                createStory: function () {
+                    createStory: function () {
                     
                     let formData = new FormData();
                     formData.append("title", this.title);

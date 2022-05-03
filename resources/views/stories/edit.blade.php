@@ -5,6 +5,9 @@
 @section('content')
 
 <div id="root" class="container mx-auto">
+@if($errors->any())
+    {{ implode('', $errors->all('<div>:message</div>')) }}
+@endif
     <div style="width:90%;" class="mx-auto">
         <div class="row">
             <h1>Edit story</h1>
@@ -35,14 +38,12 @@
             <label for="thumb" class="form-label">Thumbnail Image:</label>
             <input type="file" class="form-control" placeholder="Thumbnail image" id="thumb">
         </div>
-        <div>
-            <label for="tagList" class="form-label">Story tags:</label>
-            <ul id="tagList" class="list-group list-group-horizontal" >
-                <li v-for="s in allTags" class="list-group-item">
-                    <input :id="s.tag" type="checkbox" :value="s.tag" v-model="tags"></input>
-                    <label :for="s.tag"> @{{ s.tag }} </label>
-                </li>
-            </ul>
+        <label for="tagList" class="form-label">Story tags:</label>
+        <div class="d-flex justify-content-left flex-wrap">
+            <div v-for="s in allTags" :key="s.tag" class="form-check m-2">
+                <input class="form-check-input" :id="s.tag" type="checkbox" :value="s.tag" v-model="tags"></input>
+                <label class="form-check-label" :for="s.tag"> @{{ s.tag }} </label>
+            </div>
         </div>
         <br>
         <h3>Misty Details</h3>
@@ -126,9 +127,8 @@
                     })
                     .catch(response => {
                         console.log(response);
-                        console.log(response.response);
-
-                        this.errors = Object.values(response)[2].data;
+                        console.log(response.response.data.errors);
+                        this.errors = response.response.data.errors;
                     
                     })
                 },    

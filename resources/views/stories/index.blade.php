@@ -260,11 +260,15 @@
                 searchFilter: function() {
                     var tags = this.checkedTags;
                     var search = this.searchTerm;
+                    var order = this.sortOrder;
+                    var type = this.sortType;
+
                     this.reset();
 
                     this.checkedTags = tags;
                     this.searchTerm = search;
-                    
+                    this.sortType = type;
+                    this.sortOrder = order;
                     this.search();
                     this.filterTags();
                     this.sort()
@@ -274,7 +278,9 @@
                     this.displayStories = this.stories;
                     this.checkedTags = [];
                     this.searchTerm = "";
-            
+                    this.sortOrder = "asc";
+                    this.sortType = "alpha";
+                    this.sort();
                 }
             },
             mounted() {
@@ -284,6 +290,7 @@
                     this.stories = Object.values(response.data);
                     console.log(response);
                     this.reset();
+                    this.sort();
 
                 })
                 .catch(response => {
@@ -310,7 +317,6 @@
                     this.stories.unshift([]);
                     //for each story, find when most recently played
                     for (let i=1; i<this.stories.length    ; i++) {
-                        console.log(">", i);
                         //find the first index in histories that has the same id
                         var firstIndex = -1;
                         var found = false;
@@ -326,7 +332,6 @@
                         }
                         if (found) {
                             this.stories[i].playOrder = firstIndex;
-                            console.log(i, firstIndex);
                         } else {
                             this.stories[i].playOrder = Number.MAX_SAFE_INTEGER;
                         }

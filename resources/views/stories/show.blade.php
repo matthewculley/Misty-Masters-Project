@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <p class="card-text"><strong>Description:</strong> @{{ story.description }}</p>
                     <p class="card-text"><strong>Tags:</strong> @{{ tags }}</p>
-                    <p class="card-text"><strong>Interactivity range:</strong> @{{ story.min_interactivity  }}-@{{ story.max_interactivity }}</p>
+                    <p class="card-text"><strong>Interactivity range:</strong> @{{ story.min_interactivity }}-@{{ story.max_interactivity }}</p>
                     <p class="card-text"><strong>Age range:</strong> @{{ story.min_suitable_age  }} - @{{ story.max_suitable_age }} years old.</p>
                     <p class="card-text"><strong>Played:</strong> @{{ story.times_played }} times.</p>
                     <p class="card-text"><strong>Average rating:</strong> @{{ averageRating  }}</p>
@@ -35,7 +35,7 @@
                 </div>            
                 <br>
                 <label for="inter">Interactivity: @{{ interactivity }} </label>
-                <input type="range" style="width:95%;" class="form-range mx-auto" min="1" max="5" id="inter" v-model="interactivity">
+                <input type="range" style="width:95%;" class="form-range mx-auto" :min="story.min_interactivity" :max="story.max_interactivity" id="inter" v-model="interactivity">
                 <div class="text-center">
                     <button type="submit" style="width:75%;" class="btn btn-primary text-center" value="Play" @click="playStory">Play Story</button>
                 </div>

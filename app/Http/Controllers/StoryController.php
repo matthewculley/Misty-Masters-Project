@@ -237,6 +237,9 @@ class StoryController extends Controller
 
         ]);
 
+        
+
+
         //find old story 
         $story = Story::findOrFail($request['id']);
 
@@ -268,7 +271,6 @@ class StoryController extends Controller
         }
 
         $story->save();
-
     }
 
     /**
